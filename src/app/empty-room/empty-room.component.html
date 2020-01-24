@@ -1,0 +1,18 @@
+<!-- List of Input Items -->
+<ion-radio-group>
+  <ion-list *ngFor="let i of lstRoom">
+    <ion-item  size="10000" class="container-fluid">
+      <p>
+        <ion-radio slot="end" (ionSelect)="onSelect(i)"></ion-radio>
+      </p> 
+      <p>
+        <ion-label size="10000" class="nome nomeD">{{i.name}}</ion-label> 
+        <ion-label size="10000" class="nome nomeD ">Qtd. lugares: {{i.places}}</ion-label>
+      </p>
+      
+      <ion-icon (click)="presentAlert(i)" name="information-circle-outline"></ion-icon>
+      
+    </ion-item>
+  </ion-list>
+</ion-radio-group>
+<ion-button (click)="reserveRoom()">Reservar</ion-button>
