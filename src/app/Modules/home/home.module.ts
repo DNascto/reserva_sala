@@ -5,9 +5,9 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
-import { MainPageComponent } from '../main-page/main-page.component';
-import { EmptyRoomComponent } from '../empty-room/empty-room.component';
-import { BookedRoomComponent } from '../booked-room/booked-room.component';
+import { MainPageComponent } from '../../Component/main-page/main-page.component';
+import { EmptyRoomComponent } from '../../Component/empty-room/empty-room.component';
+import { BookedRoomComponent } from '../../Component/booked-room/booked-room.component';
 
 @NgModule({
   imports: [

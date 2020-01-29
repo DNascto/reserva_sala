@@ -9,12 +9,17 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+    loadChildren: () => import('./Modules/home/home.module').then(m => m.HomePageModule)
   },
   {
     path: 'list',
-    loadChildren: () => import('./list/list.module').then(m => m.ListPageModule)
+    loadChildren: () => import('./Modules/list/list.module').then(m => m.ListPageModule)
+  },
+  {
+    path: 'room-booking',
+    loadChildren: () => import('./Component/room-booking/room-booking.module').then( m => m.RoomBookingPageModule)
   }
+
 ];
 
 @NgModule({

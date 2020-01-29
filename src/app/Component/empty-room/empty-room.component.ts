@@ -1,12 +1,8 @@
-import { Room } from './../Component/Room';
+import { Room } from '../Room';
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
-
-const controller = document.querySelector('ion-alert-controller');
-// const button = document.querySelector('ion-button');
-// button.addEventListener('click', handleButtonClick);
-
-
+import { AlertController, NavController } from '@ionic/angular';
+import { RoomBookingPage } from '../room-booking/room-booking.page';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-empty-room',
@@ -24,9 +20,12 @@ export class EmptyRoomComponent implements OnInit {
     new Room('Sala Pequena', 10, false)
   ];
 
-  constructor(public alertController: AlertController) {}
+  constructor(
+    public alertController: AlertController,
+    public navCtrl: NavController,
+    private route: Router) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   reserveRoom() {
     alert('Current room is: ' + this.currentRoom.name);
@@ -36,12 +35,16 @@ export class EmptyRoomComponent implements OnInit {
     this.currentRoom = event;
   }
 
+  callBookingPage(): void {
+    this.route.navigate(['/room-booking']);
+  }
+
   async presentAlert(item: Room) {
     const alert = await this.alertController.create({
       header: 'Informações',
       subHeader: item.name,
       message: 'Lugares: ' + item.places +
-              '\n Projetor: ' + (item.projector ? 'Sim' : 'Não'),
+        '\n Projetor: ' + (item.projector ? 'Sim' : 'Não'),
       buttons: ['OK']
     });
 
