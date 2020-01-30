@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ReservationService } from '../../Service/Reservation.service';
 import { Reservation } from '../Reservation';
 import { error } from 'util';
+import { Room } from '../Room';
 
 @Component({
   selector: 'app-room-booking',
@@ -13,8 +14,8 @@ export class RoomBookingPage implements OnInit {
   nextThirty;
   selectedDate;
   selectedTime;
-  
-  constructor(private reservationService: ReservationService) { 
+
+  constructor(private reservationService: ReservationService) {
     this.today = new Date().toISOString();
     this.selectedDate = new Date().toLocaleDateString();
     let now = new Date();
@@ -25,19 +26,28 @@ export class RoomBookingPage implements OnInit {
   ngOnInit() {
   }
 
-  onSelectDate(e: Event){
-    console.log(e);
+  onSelectDate(e: Event) {
+    //console.log(e);
   }
 
-  onSelectTime(){
+  onSelectTime() {
 
   }
-  sendBooking(booking: Reservation){
-    this.reservationService.postReservation(booking).subscribe( r => {
-      console.log('Deu bom. ' + r);
-    },
-    error => {
-      console.log('Deu ruim no retorno da gravação da nova reserva.');
-    });
+  sendBooking() {
+    var booking = new Reservation(new Date, new Room('sala nova', 30, true, 2), 2, 'Daniel');
+
+    this.reservationService.postReservation(booking)
+      .subscribe(r => {
+        console.log('Deu bom. ' + r);
+      },
+        error => {
+          console.log('Deu ruim no retorno da gravação da nova reserva.');
+        });
+    // this.reservationService.getAllReservation().subscribe(r=>{
+    //   console.log(r);
+    // }, err =>{
+    //   console.log(err);
+      
+    // });
   }
 }
