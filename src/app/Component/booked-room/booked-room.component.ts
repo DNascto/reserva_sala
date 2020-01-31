@@ -2,6 +2,7 @@ import { Room } from '../Room';
 import { Reservation } from '../Reservation';
 import { Component, OnInit, Output } from '@angular/core';
 import { format } from 'date-fns';
+import { DataService } from 'src/app/Service/data.service';
 
 @Component({
   selector: 'app-booked-room',
@@ -14,6 +15,7 @@ export class BookedRoomComponent implements OnInit {
   selectedDate;
   customPickerOptions: any;
   showReserves;
+  bookings: Reservation[];
 
   reservation = [
     new Reservation(new Date(), new Room('Sala Grande', 50, true), 3, 'Bill Zuck'),
@@ -21,14 +23,14 @@ export class BookedRoomComponent implements OnInit {
     new Reservation(new Date(), new Room('Sala Pequena', 10, false), 5, 'Mark Jobs')
   ];
 
-  constructor() {
+  constructor(private dataService: DataService) {
     this.today = new Date().toISOString();
     this.selectedDate = new Date().toLocaleDateString();
     let now = new Date();
     now.setDate(now.getFullYear() + 30);
     this.nextThirty = now.toISOString();
 
-    /* quando descobrir como recuperar o valor selecionado atraves do "(ionChenge)"
+    /* quando descobrir como recuperar o valor selecionado atraves do "(ionChange)"
       o "customPickerOptions" pode ser excluido. Por enquanto, ele é a forma de 
       obter-se o valor e atribuir ao "selectedDate"
      */
@@ -50,15 +52,22 @@ export class BookedRoomComponent implements OnInit {
   }
 
   ngOnInit() { 
+    this.dataService.currentBookings.subscribe(data => {
+      this.bookings = data;
+    });
     this.sortDay();
   }
 
+  onChange(event: any){
+    console.log(event);
+    
+  }
+  
   sortDay() {
     this.showReserves = [];
-    for (const item of this.reservation) {
+    for (const item of this.bookings) {
       // console.log("item: " + item.date.toLocaleDateString());
       // console.log("dia : " + this.selectedDate);
-
       if (item.date.toLocaleDateString() == this.selectedDate) {
         this.showReserves.push(item);
       }

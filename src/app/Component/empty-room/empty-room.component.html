@@ -1,19 +1,52 @@
 <!-- List of Input Items -->
-<h2>Disponiveis</h2>
-<ion-radio-group>
-  <ion-list *ngFor="let i of lstRoom">
-    <ion-item  size="10000" class="container-fluid">
-      <p>
-        <ion-radio slot="end" (ionSelect)="onSelect(i)"></ion-radio>
-      </p> 
-      <p>
-        <ion-label size="10000" class="nome nomeD">{{i.name}}</ion-label> 
-        <ion-label size="10000" class="nome nomeD ">Qtd. lugares: {{i.places}}</ion-label>
-      </p>
-      
-      <ion-icon (click)="presentAlert(i)" name="information-circle-outline"></ion-icon>
-      
-    </ion-item>
-  </ion-list>
-</ion-radio-group>
-<ion-button (click)="callBookingPage()">Reservar</ion-button>
+
+<h2 class="no-padding no-margin">
+  Disponiveis
+  <ion-button (click)="toggleVisibility()">Trocar</ion-button>
+</h2>
+
+<div id="opt1">
+  <ion-radio-group class="no-padding no-margin">
+    <ion-list *ngFor="let i of items">
+      <ion-item size="10000">
+        <p>
+          <ion-radio slot="end" (ionSelect)="onSelect(i.sala)"></ion-radio>
+        </p>
+        <p>
+          <ion-label size="10000" class="nome nomeD">{{i.sala.name}}</ion-label>
+          <ion-label size="10000" class="nome nomeD">Qtd. lugares: {{i.sala.places}}</ion-label>
+        </p>
+
+        <ion-icon (click)="presentAlert(i.sala)" name="information-circle-outline"></ion-icon>
+
+      </ion-item>
+    </ion-list>
+  </ion-radio-group>
+  <ion-button (click)="callBookingPage()">Reservar</ion-button>
+</div>
+
+<div id="opt2">
+  <ion-card (click)="expandItem(item)" *ngFor="let item of items">
+    <ion-card-header>
+      <ion-card-title>{{item.sala.name}}
+        <ion-icon (click)="presentAlert(item.sala)" name="information-circle-outline"></ion-icon>
+      </ion-card-title>
+      <ion-card-subtitle>Qtde. Lugares: {{item.sala.places}}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <app-expandable expandHeight="100px" [expanded]="item.expanded">
+        <p *ngIf="item.sala.projector; else elseProjetor">
+          Projetor: Sim
+        </p>
+        <ng-template #elseProjetor>Projetor: Não</ng-template>
+
+      </app-expandable>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+  </ion-infinite-scroll-content>
+</ion-infinite-scroll>

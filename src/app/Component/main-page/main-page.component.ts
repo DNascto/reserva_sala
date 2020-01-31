@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from 'src/app/Service/data.service';
+import { Room } from '../Room';
 
 
 @Component({
@@ -13,24 +15,31 @@ export class MainPageComponent implements OnInit {
     speed: 400,
     pager: true
   };
-  constructor() { }
 
-  ngOnInit() { }
+  notReserved: number;
+  reserved: number;
+  rooms: Room[];
 
+  constructor(private dataService: DataService) { }
+
+  ngOnInit() {
+    this.notReserved = 0;
+    this.reserved = 0;
+    this.dataService.currentRooms.subscribe(data => {
+      console.log(data);
+      
+      this.rooms = data;
+      this.countBookings();
+    });
+  }
+
+  countBookings() {
+    this.rooms.forEach(i => {
+      if (i.booked) {
+        this.reserved++;
+      } else {
+        this.notReserved++;
+      }
+    });
+  }
 }
-
-// window.onload = function () {
-//   //initialize swiper when document ready
-//   var mySwiper = new Swiper ('.swiper-container', {
-//     // If we need pagination
-//     pagination: {
-//       el: '.swiper-pagination',
-//     },
-
-//     // Navigation arrows
-//     navigation: {
-//       nextEl: '.swiper-button-next',
-//       prevEl: '.swiper-button-prev',
-//     },
-//   })
-// };

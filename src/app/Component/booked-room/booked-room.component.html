@@ -1,13 +1,13 @@
 <!-- List of Input Items -->
 <!-- <h2>Reservadas</h2> -->
 <ion-item>
-  <ion-label>Reservadas do dia</ion-label>
+  <ion-label>Reservas do dia</ion-label>
   <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{nextThirty}}" value="{{today}}"
-    [pickerOptions]="customPickerOptions" displayFormat="DD/MM/YYYY" placeholder="Selecione o dia">
-    <!-- (ionChange)="sortDay()"> -->
+    [pickerOptions]="customPickerOptions" displayFormat="DD/MM/YYYY" placeholder="Selecione o dia"
+    (ionChange)="onChange($event)">
   </ion-datetime>
 </ion-item>
-<ion-list *ngFor="let i of showReserves">
+<ion-list *ngFor="let i of bookings">
   <ion-item>
     <ion-grid>
       <ion-row class="fonte">
@@ -15,7 +15,7 @@
           {{i.room.name}}
         </ion-col>
         <ion-col>
-          Data: {{i.date.toLocaleDateString()}}
+          Data: {{i.date}}
         </ion-col>
       </ion-row>
       <ion-row class="fonte">

@@ -8,6 +8,8 @@ import { HomePage } from './home.page';
 import { MainPageComponent } from '../../Component/main-page/main-page.component';
 import { EmptyRoomComponent } from '../../Component/empty-room/empty-room.component';
 import { BookedRoomComponent } from '../../Component/booked-room/booked-room.component';
+import { ExpandableComponent } from "../../Component/expandable/expandable.component";
+
 
 @NgModule({
   imports: [
@@ -25,7 +27,8 @@ import { BookedRoomComponent } from '../../Component/booked-room/booked-room.com
     HomePage,
     MainPageComponent,
     EmptyRoomComponent,
-    BookedRoomComponent
+    BookedRoomComponent,
+    ExpandableComponent
   ]
 })
 export class HomePageModule { }
