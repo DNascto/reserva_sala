@@ -1,5 +1,5 @@
 import { Room } from '../Room';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { RoomBookingPage } from '../room-booking/room-booking.page';
 import { Router } from '@angular/router';
@@ -12,26 +12,35 @@ import { DataService } from 'src/app/Service/data.service';
 })
 
 export class EmptyRoomComponent implements OnInit {
+  
+  // @Input('freeRooms') public freeRooms: any= [];
   public items: any = [];
+  
   currentRoom: Room;
   today;
   nextThirty;
   selectedDate;
   customPickerOptions: any;
   showReserves;
-  rooms: Room[];
-  // lstRoom = [
-  //   new Room('Sala Grande', 50, true),
-  //   new Room('Sala Media', 25, true),
-  //   new Room('Sala Pequena', 10, false)
-  // ];
-
+    
   constructor(
     private dataService: DataService,
     private route: Router,
     public alertController: AlertController,
     public navCtrl: NavController
-  ) { }
+  ) {}
+
+  ngOnInit() {
+    this.dataService.currentRooms.subscribe(data => {
+      data.forEach(i => {
+        this.items.push({ expanded: false, sala: i });
+      });
+    });
+    // this.freeRooms.forEach(i => {
+    //   this.items.push({ expanded: false, sala: i });
+    // });
+    this.toggleVisibility();
+  }
 
   expandItem(item): void {
     if (item.expanded) {
@@ -46,16 +55,6 @@ export class EmptyRoomComponent implements OnInit {
         return listItem;
       });
     }
-
-  }
-  ngOnInit() {
-    this.dataService.currentRooms.subscribe(data => {
-      this.rooms = data;
-      data.forEach(i => {
-        this.items.push({ expanded: false, sala: i });
-      });
-    });
-    this.toggleVisibility();
   }
 
   reserveRoom() {
@@ -87,10 +86,7 @@ export class EmptyRoomComponent implements OnInit {
     setTimeout(() => {
       console.log('Done');
       event.target.complete();
-
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      if (this.items.length == 10) {
+      if (this.items.length == 100) {
         event.target.disabled = true;
       }
     }, 500);

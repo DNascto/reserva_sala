@@ -8,13 +8,13 @@
 <div id="opt1">
   <ion-radio-group class="no-padding no-margin">
     <ion-list *ngFor="let i of items">
-      <ion-item size="10000">
+      <ion-item >
         <p>
           <ion-radio slot="end" (ionSelect)="onSelect(i.sala)"></ion-radio>
         </p>
         <p>
-          <ion-label size="10000" class="nome nomeD">{{i.sala.name}}</ion-label>
-          <ion-label size="10000" class="nome nomeD">Qtd. lugares: {{i.sala.places}}</ion-label>
+          <ion-label size="1000" class="nome nomeD">{{i.sala.name}}</ion-label>
+          <ion-label size="1000" class="nome nomeD">Qtd. lugares: {{i.sala.places}}</ion-label>
         </p>
 
         <ion-icon (click)="presentAlert(i.sala)" name="information-circle-outline"></ion-icon>
@@ -41,6 +41,9 @@
         </p>
         <ng-template #elseProjetor>Projetor: Não</ng-template>
 
+        <div>
+          <ion-button (click)="callBookingPage()">Reservar</ion-button>
+        </div>
       </app-expandable>
     </ion-card-content>
   </ion-card>

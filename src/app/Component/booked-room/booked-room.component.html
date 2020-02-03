@@ -7,25 +7,31 @@
     (ionChange)="onChange($event)">
   </ion-datetime>
 </ion-item>
-<ion-list *ngFor="let i of bookings">
-  <ion-item>
-    <ion-grid>
-      <ion-row class="fonte">
-        <ion-col>
-          {{i.room.name}}
-        </ion-col>
-        <ion-col>
-          Data: {{i.date}}
-        </ion-col>
-      </ion-row>
-      <ion-row class="fonte">
-        <ion-col>
-          Autor: {{i.author}}
-        </ion-col>
-        <ion-col>
-          Periodo: 3h 30min
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-item>
-</ion-list>
+<div *ngIf="bookings.length == 0; else elseLista">
+  <h1>Não há reservas para esta data</h1>
+</div>
+
+<div ng-template #elseProjetor>
+  <ion-list *ngFor="let i of bookings">
+    <ion-item>
+      <ion-grid>
+        <ion-row class="fonte">
+          <ion-col>
+            {{i.room.name}}
+          </ion-col>
+          <ion-col>
+            Data: {{i.date}}
+          </ion-col>
+        </ion-row>
+        <ion-row class="fonte">
+          <ion-col>
+            Autor: {{i.author}}
+          </ion-col>
+          <ion-col>
+            Periodo: 3h 30min
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Room } from '../Component/Room';
 
 @Injectable({
@@ -20,5 +20,10 @@ export class RoomService {
     
     getAllRoom() {
         return this.http.get<Room[]>( this.url + '/all');
+    }
+    
+    getCountRoom(booked: boolean) {
+        const params = new HttpParams().set('booked', booked.toString());
+        return this.http.get<number>( this.url + '/count/', { params } );
     }
 }

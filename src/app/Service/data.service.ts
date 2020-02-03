@@ -15,7 +15,8 @@ export class DataService {
   
   constructor() { }
 
-  changeRooms(val: Array<Room>) {
+  
+  allRooms(val: Array<Room>) {
     this.sourceRoom.next(val);
   }
 
@@ -23,7 +24,7 @@ export class DataService {
     this.sourceRoom.next(val);
   }
 
-  changeReservations(val2: Array<Reservation>) {
+  allReservations(val2: Array<Reservation>) {
     this.sourceBooking.next(val2);
   }
 }

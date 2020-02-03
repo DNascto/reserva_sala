@@ -1,14 +1,16 @@
-import { Room } from '../Room';
 import { Reservation } from '../Reservation';
 import { Component, OnInit, Output } from '@angular/core';
-import { format } from 'date-fns';
 import { DataService } from 'src/app/Service/data.service';
+import { ToastController } from '@ionic/angular';
+import { Room } from '../Room';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-booked-room',
   templateUrl: './booked-room.component.html',
   styleUrls: ['./booked-room.component.scss']
 })
+
 export class BookedRoomComponent implements OnInit {
   today;
   nextThirty;
@@ -16,14 +18,9 @@ export class BookedRoomComponent implements OnInit {
   customPickerOptions: any;
   showReserves;
   bookings: Reservation[];
+  noConnectionOrData: boolean
 
-  reservation = [
-    new Reservation(new Date(), new Room('Sala Grande', 50, true), 3, 'Bill Zuck'),
-    new Reservation(new Date(), new Room('Sala Media', 25, true), 2, 'Steve Gates'),
-    new Reservation(new Date(), new Room('Sala Pequena', 10, false), 5, 'Mark Jobs')
-  ];
-
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, public toastController: ToastController) {
     this.today = new Date().toISOString();
     this.selectedDate = new Date().toLocaleDateString();
     let now = new Date();
@@ -54,10 +51,20 @@ export class BookedRoomComponent implements OnInit {
   ngOnInit() { 
     this.dataService.currentBookings.subscribe(data => {
       this.bookings = data;
+    }, err => {
+      this.noConnectionOrData = true;
+      console.log(err);
     });
     this.sortDay();
   }
 
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Your settings have been saved.',
+      duration: 2000
+    });
+    toast.present();
+  }
   onChange(event: any){
     console.log(event);
     

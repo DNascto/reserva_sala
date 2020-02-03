@@ -9,20 +9,27 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen class="padding" scroll-y="true">
+<ion-content fullscreen class="padding" scroll-y="true" ion-toast-controller>
   <ion-slides pager="true" [options]="slideOpts" class="swiper-container">
     <ion-slide>
-      <!-- <app-empty-room></app-empty-room>s -->
-      <app-booked-room></app-booked-room>
+      <!-- <app-empty-room></app-empty-room> -->
+      <ion-content>
+        <app-booked-room></app-booked-room>
+      </ion-content>
     </ion-slide>
 
     <ion-slide>
       <!-- <img src="./slide-2.png"/> -->
-      <app-main-page></app-main-page>
+      <!-- <ion-content> -->
+        <app-main-page [notReserved]="notReserved" [reserved]="reserved"></app-main-page>
+      <!-- </ion-content> -->
     </ion-slide>
 
     <ion-slide>
-      <app-empty-room></app-empty-room>
+      <ion-content>
+        <app-empty-room ></app-empty-room>
+        <!-- <app-empty-room [freeRooms]="freeRooms"></app-empty-room> -->
+      </ion-content>
     </ion-slide>
 
   </ion-slides>

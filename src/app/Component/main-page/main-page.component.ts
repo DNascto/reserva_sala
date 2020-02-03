@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ViewChildren } from '@angular/core';
 import { DataService } from 'src/app/Service/data.service';
 import { Room } from '../Room';
-
 
 @Component({
   selector: 'app-main-page',
@@ -11,35 +10,18 @@ import { Room } from '../Room';
 export class MainPageComponent implements OnInit {
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
-    initialSlide: 2,
+    initialSlide: 1,
     speed: 400,
     pager: true
   };
 
-  notReserved: number;
-  reserved: number;
-  rooms: Room[];
+  @Input() notReserved: number;
+  @Input() reserved: number;
 
-  constructor(private dataService: DataService) { }
-
+  constructor() { }
+  
   ngOnInit() {
     this.notReserved = 0;
     this.reserved = 0;
-    this.dataService.currentRooms.subscribe(data => {
-      console.log(data);
-      
-      this.rooms = data;
-      this.countBookings();
-    });
-  }
-
-  countBookings() {
-    this.rooms.forEach(i => {
-      if (i.booked) {
-        this.reserved++;
-      } else {
-        this.notReserved++;
-      }
-    });
   }
 }
