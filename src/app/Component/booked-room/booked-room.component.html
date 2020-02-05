@@ -7,12 +7,12 @@
     (ionChange)="onChange($event)">
   </ion-datetime>
 </ion-item>
-<div *ngIf="bookings.length == 0; else elseLista">
+<!-- <div *ngIf="showReserves.length == 0; else elseLista">
   <h1>Não há reservas para esta data</h1>
-</div>
+</div> -->
 
 <div ng-template #elseProjetor>
-  <ion-list *ngFor="let i of bookings">
+  <ion-list *ngFor="let i of showReserves">
     <ion-item>
       <ion-grid>
         <ion-row class="fonte">

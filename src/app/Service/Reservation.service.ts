@@ -11,10 +11,10 @@ export class ReservationService {
     private headers: HttpHeaders;
     constructor(private http: HttpClient) { }
 
-    getAllReservation(): Observable<any> {
+    getAllReservation(): Observable<Reservation[]> {
         this.headers = new HttpHeaders();
         this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
-        return this.http.get<any>(this.url + '/bookings', { headers: this.headers });
+        return this.http.get<Reservation[]>(this.url + '/bookings', { headers: this.headers });
     }
 
     postReservation(reservation: Reservation): Observable<any> {

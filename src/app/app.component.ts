@@ -17,9 +17,14 @@ export class AppComponent {
       icon: 'home'
     },
     {
-      title: 'List',
+      title: 'Minhas Reservas',
       url: '/list',
       icon: 'list'
+    },
+    {
+      title: 'Configurações',
+      url: '/configs',
+      icon: 'settings'
     }
   ];
 

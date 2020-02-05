@@ -1,9 +1,8 @@
 import { Reservation } from '../Reservation';
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/Service/data.service';
 import { ToastController } from '@ionic/angular';
-import { Room } from '../Room';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 
 @Component({
   selector: 'app-booked-room',
@@ -14,11 +13,11 @@ import { format } from 'date-fns';
 export class BookedRoomComponent implements OnInit {
   today;
   nextThirty;
-  selectedDate;
+  selectedDate: string;
   customPickerOptions: any;
   showReserves;
   bookings: Reservation[];
-  noConnectionOrData: boolean
+  noConnectionOrData: boolean;
 
   constructor(private dataService: DataService, public toastController: ToastController) {
     this.today = new Date().toISOString();
@@ -31,30 +30,31 @@ export class BookedRoomComponent implements OnInit {
       o "customPickerOptions" pode ser excluido. Por enquanto, ele é a forma de 
       obter-se o valor e atribuir ao "selectedDate"
      */
-    this.customPickerOptions = {
-      buttons: [
-        {
-          text: 'Cancelar',
-          handler: () => {}
-        },
-        {
-          text: 'Selecionar',
-          handler: (e) => {
-            this.selectedDate = new Date(e.year.value, (e.month.value-1), e.day.value).toLocaleDateString();
-            this.sortDay(); 
-          }
-        }
-      ]
-    };
+    // this.customPickerOptions = {
+    //   buttons: [
+    //     {
+    //       text: 'Cancelar',
+    //       handler: () => {}
+    //     },
+    //     {
+    //       text: 'Selecionar',
+    //       handler: (e) => {
+    //         this.selectedDate = new Date(e.year.value, (e.month.value-1), e.day.value).toLocaleDateString();
+    //         this.sortDay(); 
+    //       }
+    //     }
+    //   ]
+    // };
   }
 
-  ngOnInit() { 
+  ngOnInit() {
     this.dataService.currentBookings.subscribe(data => {
       this.bookings = data;
     }, err => {
       this.noConnectionOrData = true;
       console.log(err);
     });
+
     this.sortDay();
   }
 
@@ -65,17 +65,17 @@ export class BookedRoomComponent implements OnInit {
     });
     toast.present();
   }
-  onChange(event: any){
-    console.log(event);
-    
+
+  onChange(event: any) {
+    this.selectedDate = new Date(event.detail.value).toISOString();
+
+    this.sortDay();
   }
-  
+
   sortDay() {
     this.showReserves = [];
     for (const item of this.bookings) {
-      // console.log("item: " + item.date.toLocaleDateString());
-      // console.log("dia : " + this.selectedDate);
-      if (item.date.toLocaleDateString() == this.selectedDate) {
+      if (new Date(item.date).toLocaleDateString() == new Date(this.selectedDate).toLocaleDateString()) {
         this.showReserves.push(item);
       }
     }

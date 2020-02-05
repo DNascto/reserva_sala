@@ -1,15 +1,15 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-        <ion-back-button defaultHref="home"></ion-back-button>
-      </ion-buttons>
-    <ion-title>room-booking</ion-title> 
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>room-booking</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div>
-    <ion-label>Sala selecionada: </ion-label>
+    <h2> Sala selecionada: </h2>
   </div>
   <div>
     <ion-label>Dia: </ion-label>
@@ -20,6 +20,10 @@
   </div>
   <div>
     <ion-label>Periodo: </ion-label>
+    <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{nextThirty}}" value="{{today}}"
+      [pickerOptions]="customPickerOptions" displayFormat="HH:mm" placeholder="Selecione o periodo"
+      minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar" (ionChange)="onSelectTime()">
+    </ion-datetime>
     <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{nextThirty}}" value="{{today}}"
       [pickerOptions]="customPickerOptions" displayFormat="HH:mm" placeholder="Selecione o periodo"
       minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar" (ionChange)="onSelectTime()">

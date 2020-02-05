@@ -51,12 +51,6 @@ export class HomePage implements OnInit {
     }, err => {
       console.log(err);
     });    
-
-    // this.roomsService.getAllFreeRoom().subscribe(r => {
-    //   this.dataService.freeRooms(r);
-    // }, err => {
-    //   console.log(err);
-    // });
     
     this.bookingService.getAllReservation().subscribe(b => {
       if(b.length === 0){

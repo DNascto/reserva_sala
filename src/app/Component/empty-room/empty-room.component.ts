@@ -12,8 +12,6 @@ import { DataService } from 'src/app/Service/data.service';
 })
 
 export class EmptyRoomComponent implements OnInit {
-  
-  // @Input('freeRooms') public freeRooms: any= [];
   public items: any = [];
   
   currentRoom: Room;
@@ -36,9 +34,6 @@ export class EmptyRoomComponent implements OnInit {
         this.items.push({ expanded: false, sala: i });
       });
     });
-    // this.freeRooms.forEach(i => {
-    //   this.items.push({ expanded: false, sala: i });
-    // });
     this.toggleVisibility();
   }
 
