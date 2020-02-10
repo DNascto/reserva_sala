@@ -13,14 +13,15 @@ import { DataService } from 'src/app/Service/data.service';
 
 export class EmptyRoomComponent implements OnInit {
   public items: any = [];
-  
+
   currentRoom: Room;
   today;
   nextThirty;
   selectedDate;
   customPickerOptions: any;
   showReserves;
-    
+  
+  maxDate;
   constructor(
     private dataService: DataService,
     private route: Router,
@@ -29,7 +30,12 @@ export class EmptyRoomComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dataService.currentRooms.subscribe(data => {
+    this.today = new Date().toISOString();
+    let now = new Date();
+    now.setDate(now.getFullYear() + 30);
+    this.maxDate = now.toISOString();
+
+    this.dataService.varCurrentRooms.subscribe(data => {
       data.forEach(i => {
         this.items.push({ expanded: false, sala: i });
       });
@@ -39,7 +45,7 @@ export class EmptyRoomComponent implements OnInit {
 
   expandItem(item): void {
     if (item.expanded) {
-      item.expanded = false;
+      // item.expanded = false;
     } else {
       this.items.map(listItem => {
         if (item == listItem) {
@@ -52,15 +58,12 @@ export class EmptyRoomComponent implements OnInit {
     }
   }
 
-  reserveRoom() {
-    alert('Current room is: ' + this.currentRoom.name);
-  }
-
   onSelect(event: Room) {
     this.currentRoom = event;
   }
 
   callBookingPage(): void {
+    this.dataService.selectedRoom(this.currentRoom);
     this.route.navigate(['/room-booking']);
   }
 
@@ -69,17 +72,15 @@ export class EmptyRoomComponent implements OnInit {
       header: 'Informações',
       subHeader: item.name,
       message: 'Lugares: ' + item.places +
-        '\n Projetor: ' + (item.projector ? 'Sim' : 'Não'),
+        '<br/>Projetor: ' + (item.projector ? 'Sim' : 'Não'),
       buttons: ['OK']
     });
 
     await alert.present();
   }
 
-
   loadData(event) {
     setTimeout(() => {
-      console.log('Done');
       event.target.complete();
       if (this.items.length == 100) {
         event.target.disabled = true;

@@ -9,29 +9,57 @@
 
 <ion-content>
   <div>
-    <h2> Sala selecionada: </h2>
+    <h4> Sala selecionada: {{selectedRoom.name}} </h4>
   </div>
   <div>
-    <ion-label>Dia: </ion-label>
-    <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{nextThirty}}" value="{{today}}"
-      [pickerOptions]="customPickerOptions" displayFormat="DD/MM/YYYY" placeholder="Selecione o dia"
-      cancelText="cancelar" doneText="selecionar" (ionChange)="onSelectDate(this)">
+    <!-- <ion-label> -->
+    Dia:
+    <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{maxDate}}" displayFormat="DD/MM/YYYY"
+      placeholder="Selecione o dia" cancelText="cancelar" doneText="selecionar" (ionChange)="onSelectDate()">
     </ion-datetime>
+    <!-- </ion-label> -->
   </div>
-  <div>
+  <ion-grid>
     <ion-label>Periodo: </ion-label>
-    <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{nextThirty}}" value="{{today}}"
-      [pickerOptions]="customPickerOptions" displayFormat="HH:mm" placeholder="Selecione o periodo"
-      minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar" (ionChange)="onSelectTime()">
-    </ion-datetime>
-    <ion-datetime [(ngModel)]="selectedDate" min="{{today}}" max="{{nextThirty}}" value="{{today}}"
-      [pickerOptions]="customPickerOptions" displayFormat="HH:mm" placeholder="Selecione o periodo"
-      minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar" (ionChange)="onSelectTime()">
-    </ion-datetime>
-  </div>
+    <ion-row>
+      <ion-col size="5">
+        <ion-datetime [(ngModel)]="selectedInicialTime" displayFormat="HH:mm" placeholder="Hora de inicio"
+          minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar" [hourValues]="customHours">
+          <!-- (ionChange)="onSelectInitialTime()"> -->
+        </ion-datetime>
+      </ion-col>
+      <ion-col size="2" class="align-self-start">
+        até
+      </ion-col>
+      <ion-col size="5">
+        <ion-datetime [(ngModel)]="selectedFinalTime" displayFormat="HH:mm" placeholder="Hora termino"
+          minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar">
+          <!-- (ionChange)="onSelectFinalTime()"> -->
+        </ion-datetime>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
   <div>
     <ion-label>Repetir</ion-label>
     <ion-checkbox></ion-checkbox>
   </div>
   <ion-button (click)="sendBooking()">Confirmar</ion-button>
+
+  <ion-content>
+    <ion-list *ngFor="let i of bookingList">
+      <ion-item *ngIf="i.room.name == selectedRoom.name && myCompareDate(i)">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="2">
+              {{i.date | date : 'HH:mm'}}
+            </ion-col>
+            <ion-col size="9">
+              Autor: {{i.author}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+    </ion-list>
+  </ion-content>
 </ion-content>

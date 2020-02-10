@@ -7,21 +7,27 @@ import { Reservation } from '../Component/Reservation';
   providedIn: 'root'
 })
 export class DataService {
+  room: Room;
 
-  private sourceRoom = new BehaviorSubject(new Array<Room>());
+  private sourceRoom = new BehaviorSubject(this.room);
+  private sourceRooms = new BehaviorSubject(new Array<Room>());
   private sourceBooking = new BehaviorSubject(new Array<Reservation>());
-  currentRooms = this.sourceRoom.asObservable();
-  currentBookings = this.sourceBooking.asObservable();
-  
+  varSelectedRoom = this.sourceRoom.asObservable();
+  varCurrentRooms = this.sourceRooms.asObservable();
+  varCurrentBookings = this.sourceBooking.asObservable();
+
   constructor() { }
 
-  
-  allRooms(val: Array<Room>) {
+  selectedRoom(val: Room) {
     this.sourceRoom.next(val);
   }
 
+  allRooms(val: Array<Room>) {
+    this.sourceRooms.next(val);
+  }
+
   freeRooms(val: Array<Room>) {
-    this.sourceRoom.next(val);
+    this.sourceRooms.next(val);
   }
 
   allReservations(val2: Array<Reservation>) {

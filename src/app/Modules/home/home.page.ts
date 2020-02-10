@@ -1,6 +1,5 @@
-import { Component, OnInit, Input  } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { RoomService } from 'src/app/Service/Room.service';
-import { Room } from 'src/app/Component/Room';
 import { DataService } from 'src/app/Service/data.service';
 import { ReservationService } from 'src/app/Service/Reservation.service';
 import { ToastController } from '@ionic/angular';
@@ -11,7 +10,6 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  freeRooms: Room[];
   notReserved: number;
   reserved: number;
 
@@ -22,14 +20,21 @@ export class HomePage implements OnInit {
     private bookingService: ReservationService,
     private dataService: DataService,
     public toastController: ToastController
-    ) { }
-
+  ) { }
+  // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
-    initialSlide: 1,
-    speed: 400
+    pager: true,
+    speed: 400,
+    initialSlide: 1
   };
 
   ngOnInit(): void {
+    let user = {
+      name: 'Daniel',
+      immediatlyApprovation: true
+    }
+    localStorage.setItem('user', JSON.stringify(user));
+
     this.reserved = 0;
     this.notReserved = 0;
 
@@ -37,7 +42,7 @@ export class HomePage implements OnInit {
       this.notReserved = r;
     }, err => {
       console.log(err);
-    }); 
+    });
 
     this.roomsService.getCountRoom(true).subscribe(r => {
       this.reserved = r;
@@ -46,23 +51,24 @@ export class HomePage implements OnInit {
     });
 
     this.roomsService.getAllFreeRoom().subscribe(r => {
-      this.dataService.freeRooms(r);      
-      // this.freeRooms = r;
+      this.dataService.freeRooms(r);
+      localStorage.setItem('freeRooms', JSON.stringify(r));
     }, err => {
       console.log(err);
-    });    
-    
+    });
+
     this.bookingService.getAllReservation().subscribe(b => {
-      if(b.length === 0){
+      if (b.length === 0) {
         this.presentToast('Nenhum dado registrado');
-      }else{
+      } else {
         this.dataService.allReservations(b);
       }
     }, err => {
       console.log(err);
-      if(err.status === 0){
-        this.presentToast('Servidor não encontrado');
-      }else if(err.status === 500){        
+      if (err.status === 0) {
+        // this.presentToast('Erro de conexão. Verifique sua conexão com a internet.');
+        this.presentToast('Servidor em manutenção. Tente novamente mais tarde.');
+      } else if (err.status === 500) {
         this.presentToast('Erro de requisição. Tente novamente mais tarde.');
       }
     });

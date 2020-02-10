@@ -8,7 +8,7 @@
 <div id="opt1">
   <ion-radio-group class="no-padding no-margin">
     <ion-list *ngFor="let i of items">
-      <ion-item >
+      <ion-item>
         <p>
           <ion-radio slot="end" (ionSelect)="onSelect(i.sala)"></ion-radio>
         </p>
@@ -40,9 +40,27 @@
           Projetor: Sim
         </p>
         <ng-template #elseProjetor>Projetor: Não</ng-template>
-
+        <!-- <ion-grid>
+          <ion-row>
+            <ion-col size="5">
+                <ion-datetime [(ngModel)]="inicialTime" min="{{today}}" value="{{periodStarts}}" displayFormat="HH:mm"
+                placeholder="Hora de inicio" minuteValues="0,15,30,45" cancelText="cancelar" doneText="selecionar"
+                (ionChange)="onSelectInitialTime()">
+              </ion-datetime>
+            </ion-col>
+            <ion-col size="2">
+              até
+            </ion-col>
+            <ion-col size="5">
+              <ion-datetime [(ngModel)]="finalTime" min="{{minPeriod}}" value="{{periodEnds}}"
+                displayFormat="HH:mm" placeholder="Hora termino" minuteValues="0,15,30,45" cancelText="cancelar"
+                doneText="selecionar" (ionChange)="onSelectFinalTime()">
+              </ion-datetime>
+            </ion-col>
+          </ion-row>
+        </ion-grid> -->
         <div>
-          <ion-button (click)="callBookingPage()">Reservar</ion-button>
+          <ion-button (click)="onSelect(item.sala);callBookingPage()">Reservar</ion-button>
         </div>
       </app-expandable>
     </ion-card-content>

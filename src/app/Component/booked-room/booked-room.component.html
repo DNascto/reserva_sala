@@ -17,18 +17,29 @@
       <ion-grid>
         <ion-row class="fonte">
           <ion-col>
-            {{i.room.name}}
-          </ion-col>
-          <ion-col>
-            Data: {{i.date}}
+            Autor: {{i.author}}
           </ion-col>
         </ion-row>
         <ion-row class="fonte">
           <ion-col>
-            Autor: {{i.author}}
+            {{i.room.name}}
           </ion-col>
           <ion-col>
-            Periodo: 3h 30min
+            Data: {{i.date | date : 'dd/MM/yyyy'}}
+          </ion-col>
+        </ion-row>
+        <ion-row class="fonte">
+          <ion-col size="2">
+            De:
+          </ion-col>
+          <ion-col size="4">
+              {{i.date | date : 'HH:mm'}} 
+          </ion-col>
+          <ion-col size="2">
+            até
+          </ion-col>
+          <ion-col size="4">
+              {{i.checkout | date : 'HH:mm'}} 
           </ion-col>
         </ion-row>
       </ion-grid>

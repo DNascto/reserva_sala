@@ -1,8 +1,8 @@
 import { Reservation } from '../Reservation';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DataService } from 'src/app/Service/data.service';
 import { ToastController } from '@ionic/angular';
-// import { format } from 'date-fns';
+import addMinutes from 'date-fns/addMinutes';
 
 @Component({
   selector: 'app-booked-room',
@@ -10,7 +10,7 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./booked-room.component.scss']
 })
 
-export class BookedRoomComponent implements OnInit {
+export class BookedRoomComponent implements OnInit ,  AfterViewInit {
   today;
   nextThirty;
   selectedDate: string;
@@ -20,42 +20,25 @@ export class BookedRoomComponent implements OnInit {
   noConnectionOrData: boolean;
 
   constructor(private dataService: DataService, public toastController: ToastController) {
+    this.selectedDate = new Date().toString();
     this.today = new Date().toISOString();
-    this.selectedDate = new Date().toLocaleDateString();
+    
     let now = new Date();
     now.setDate(now.getFullYear() + 30);
     this.nextThirty = now.toISOString();
-
-    /* quando descobrir como recuperar o valor selecionado atraves do "(ionChange)"
-      o "customPickerOptions" pode ser excluido. Por enquanto, ele é a forma de 
-      obter-se o valor e atribuir ao "selectedDate"
-     */
-    // this.customPickerOptions = {
-    //   buttons: [
-    //     {
-    //       text: 'Cancelar',
-    //       handler: () => {}
-    //     },
-    //     {
-    //       text: 'Selecionar',
-    //       handler: (e) => {
-    //         this.selectedDate = new Date(e.year.value, (e.month.value-1), e.day.value).toLocaleDateString();
-    //         this.sortDay(); 
-    //       }
-    //     }
-    //   ]
-    // };
   }
 
   ngOnInit() {
-    this.dataService.currentBookings.subscribe(data => {
+    this.dataService.varCurrentBookings.subscribe(data => {
       this.bookings = data;
     }, err => {
       this.noConnectionOrData = true;
       console.log(err);
     });
-
     this.sortDay();
+
+  }
+  ngAfterViewInit(){
   }
 
   async presentToast() {
@@ -74,8 +57,23 @@ export class BookedRoomComponent implements OnInit {
 
   sortDay() {
     this.showReserves = [];
+    var now = new Date();
     for (const item of this.bookings) {
+      var date: Date = new Date(item.date);
+
+      // var now = new Date();
+      // var utc = new Date(date.getTime() + now.getTimezoneOffset() * 60000);
+      // console.log('teste: ' + new Date(date.getTime() + now.getTimezoneOffset() * 60000).toString());
+      
       if (new Date(item.date).toLocaleDateString() == new Date(this.selectedDate).toLocaleDateString()) {
+        // set timezone at date
+        // coloca a data no fuso horario atual
+        // item.date = new Date(date.getTime() + now.getTimezoneOffset() * 60000).toString();
+
+        // calculate the time of reserved of booking
+        // calcula o tempo que a sala foi reservada
+        var res = addMinutes(new Date(item.date), item.period);
+        item.checkout = new Date(res);
         this.showReserves.push(item);
       }
     }
