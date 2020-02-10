@@ -1,8 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { RoomService } from 'src/app/Service/Room.service';
 import { DataService } from 'src/app/Service/data.service';
+import { RoomService } from 'src/app/Service/Room.service';
+import { UserService } from 'src/app/Service/User.service';
 import { ReservationService } from 'src/app/Service/Reservation.service';
 import { ToastController } from '@ionic/angular';
+import { User } from 'src/app/Component/User';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +20,7 @@ export class HomePage implements OnInit {
   constructor(
     private roomsService: RoomService,
     private bookingService: ReservationService,
+    private userService: UserService,
     private dataService: DataService,
     public toastController: ToastController
   ) { }
@@ -29,14 +32,30 @@ export class HomePage implements OnInit {
   };
 
   ngOnInit(): void {
-    let user = {
-      name: 'Daniel',
-      immediatlyApprovation: true
-    }
-    localStorage.setItem('user', JSON.stringify(user));
+
+    //   name: 'Robert',
+    //   password: '123456',
+    //   accessLevel: 1,
+    //   immediatlyApprovation: true
+    // );
 
     this.reserved = 0;
     this.notReserved = 0;
+
+    let user = new User ('Robert','123456', 1, true);
+
+    this.userService.postNewUser(user).subscribe(u => {
+        console.log('usuario criado com sucesso: ' + u);
+    }, err => {
+      console.error("Usuario não criado.");      
+    });
+
+    this.userService.getUserById(1).subscribe(u => {
+      let user = u;
+      localStorage.setItem('user', JSON.stringify(user));
+    }, err => {
+      console.log(err);
+    });
 
     this.roomsService.getCountRoom(false).subscribe(r => {
       this.notReserved = r;
