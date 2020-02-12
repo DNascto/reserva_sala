@@ -8,8 +8,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-
 import { HttpClientModule } from '@angular/common/http';
+
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
+// import { InputMaskModule } from 'ionic-input-mask';
 
 @NgModule({
   declarations: [AppComponent
@@ -20,11 +22,13 @@ import { HttpClientModule } from '@angular/common/http';
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule
+    // InputMaskModule
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    NativeStorage
     // { provide: ReservationService, useClass: ReservationService,  deps: [HttpClientModule]}
   ],
   bootstrap: [AppComponent]

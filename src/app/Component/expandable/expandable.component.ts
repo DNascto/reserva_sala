@@ -7,7 +7,7 @@ import { Component, AfterViewInit, Input, ViewChild, ElementRef, Renderer2 } fro
 })
 
 export class ExpandableComponent implements AfterViewInit {
-  //TODO: caso de erro no accordion, trocar o 'static' para false;
+  //TODO: caso dê erro no accordion, trocar o 'static' para false;
   @ViewChild("expandWrapper", { read: ElementRef, static: true }) expandWrapper: ElementRef;
   @Input("expanded") expanded: boolean = false;
   @Input("expandHeight") expandHeight: string = "150px";

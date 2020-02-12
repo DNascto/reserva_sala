@@ -1,4 +1,4 @@
-import { Reservation } from '../Reservation';
+import { Reservation } from '../../Models/Reservation';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DataService } from 'src/app/Service/data.service';
 import { ToastController } from '@ionic/angular';

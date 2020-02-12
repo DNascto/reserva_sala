@@ -1,4 +1,4 @@
-import { Room } from '../Room';
+import { Room } from '../../Models/Room';
 import { Component, OnInit, Input } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { RoomBookingPage } from '../room-booking/room-booking.page';

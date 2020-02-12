@@ -3,8 +3,10 @@ import { DataService } from 'src/app/Service/data.service';
 import { RoomService } from 'src/app/Service/Room.service';
 import { UserService } from 'src/app/Service/User.service';
 import { ReservationService } from 'src/app/Service/Reservation.service';
-import { ToastController } from '@ionic/angular';
-import { User } from 'src/app/Component/User';
+import { ToastController, NavController } from '@ionic/angular';
+import { User } from 'src/app/Models/User';
+import { AlertService } from 'src/app/Service/alert.service';
+import { AuthService } from 'src/app/Service/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +17,8 @@ export class HomePage implements OnInit {
   notReserved: number;
   reserved: number;
 
+  user: User;
+
   controller = document.querySelector('div > ion-toast-controller');
 
   constructor(
@@ -22,7 +26,9 @@ export class HomePage implements OnInit {
     private bookingService: ReservationService,
     private userService: UserService,
     private dataService: DataService,
-    public toastController: ToastController
+    private alertService: AlertService,
+    private authService: AuthService, 
+    private navCtrl: NavController
   ) { }
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
@@ -31,31 +37,21 @@ export class HomePage implements OnInit {
     initialSlide: 1
   };
 
+  ionViewWillEnter() {
+    this.authService.user().subscribe(
+      user => {
+        if(this.authService.isLoggedIn) {
+          this.user = user;
+        } else {
+          this.navCtrl.navigateRoot('/login');
+        }
+      }
+    );
+  }
+
   ngOnInit(): void {
-
-    //   name: 'Robert',
-    //   password: '123456',
-    //   accessLevel: 1,
-    //   immediatlyApprovation: true
-    // );
-
     this.reserved = 0;
     this.notReserved = 0;
-
-    let user = new User ('Robert','123456', 1, true);
-
-    this.userService.postNewUser(user).subscribe(u => {
-        console.log('usuario criado com sucesso: ' + u);
-    }, err => {
-      console.error("Usuario não criado.");      
-    });
-
-    this.userService.getUserById(1).subscribe(u => {
-      let user = u;
-      localStorage.setItem('user', JSON.stringify(user));
-    }, err => {
-      console.log(err);
-    });
 
     this.roomsService.getCountRoom(false).subscribe(r => {
       this.notReserved = r;
@@ -69,37 +65,26 @@ export class HomePage implements OnInit {
       console.log(err);
     });
 
-    this.roomsService.getAllFreeRoom().subscribe(r => {
+    this.roomsService.getAllFreeRoom().subscribe(r => {    
       this.dataService.freeRooms(r);
-      localStorage.setItem('freeRooms', JSON.stringify(r));
+      // localStorage.setItem('freeRooms', JSON.stringify(r));
     }, err => {
       console.log(err);
     });
 
     this.bookingService.getAllReservation().subscribe(b => {
       if (b.length === 0) {
-        this.presentToast('Nenhum dado registrado');
+        this.alertService.presentFixedToast('Nenhum dado registrado');
       } else {
         this.dataService.allReservations(b);
       }
     }, err => {
       console.log(err);
       if (err.status === 0) {
-        // this.presentToast('Erro de conexão. Verifique sua conexão com a internet.');
-        this.presentToast('Servidor em manutenção. Tente novamente mais tarde.');
+        this.alertService.presentFixedToast('Servidor em manutenção. Tente novamente mais tarde.');
       } else if (err.status === 500) {
-        this.presentToast('Erro de requisição. Tente novamente mais tarde.');
+        this.alertService.presentFixedToast('Erro de requisição. Tente novamente mais tarde.');
       }
     });
-  }
-
-  async presentToast(msg: string) {
-    const toast = await this.toastController.create({
-      color: 'dark',
-      message: msg,
-      showCloseButton: true
-      // duration: 2000
-    });
-    toast.present();
   }
 }
