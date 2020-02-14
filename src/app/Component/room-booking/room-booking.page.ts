@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AlertService } from 'src/app/Service/alert.service';
 import { DataService } from 'src/app/Service/data.service';
 import { ReservationService } from '../../Service/Reservation.service';
 
 import { Reservation } from '../../Models/Reservation';
 import { Room } from '../../Models/Room';
+import { User } from 'src/app/Models/User';
 
-import { ToastController } from '@ionic/angular';
 import diffInMinutes from 'date-fns/differenceInMinutes';
-import { AlertService } from 'src/app/Service/alert.service';
+import { ValidationsService } from 'src/app/Service/validations.service';
 
 @Component({
   selector: 'app-room-booking',
@@ -28,14 +29,17 @@ export class RoomBookingPage implements OnInit {
   selectedRoom: Room;
   toggleFinalTime: boolean;
 
-  customHours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  customHours = [];//[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
   bookingList: Reservation[];
+  user: User;
+  disabledHours: [11, 12, 13];
 
   constructor(
     private reservationService: ReservationService,
     private dataService: DataService,
     private route: Router,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private validationService: ValidationsService
   ) {
     this.today = new Date().toISOString();
     this.selectedDate = new Date().toISOString();
@@ -48,6 +52,7 @@ export class RoomBookingPage implements OnInit {
   }
 
   ngOnInit() {
+    this.user = JSON.parse(localStorage.getItem('user'));
     this.dataService.varSelectedRoom.subscribe(r => {
       this.selectedRoom = r;
     })
@@ -55,11 +60,12 @@ export class RoomBookingPage implements OnInit {
     this.dataService.varCurrentBookings.subscribe(r => {
       this.bookingList = r;
     })
+    this.setHours();
   }
   // ngOnDestroy() {
   // }
 
-  onSelectDate() {    
+  onSelectDate() {
   }
 
   onSelectInitialTime() {
@@ -75,7 +81,7 @@ export class RoomBookingPage implements OnInit {
   // }
 
   sendBooking() {
-    if (!this.bookingValidation()) {
+    if (!this.validationService.bookingValidation(this)) {
       return;
     }
 
@@ -85,29 +91,21 @@ export class RoomBookingPage implements OnInit {
       this.alertService.presentToast('A hora de termino deve ser posterior a hora de inicio.');
       return;
     }
-    //TODO: remover fakeUser apos criar usuarios
-    let user = {
-      immediatlyApprovation: true
-    }
 
-    //TODO: trocar o 'author' para o nome do usuario
     let booking = new Reservation(
       this.selectedInicialTime,
       this.selectedRoom,
       period,
-      'Daniel',
-      user.immediatlyApprovation);
-    console.log(booking.date);
+      this.user.name,
+      this.user.immediatlyApprovation);
 
     this.reservationService.postReservation(booking)
       .subscribe(r => {
         this.alertService.presentToast('Solicitação de reserva realizada com sucesso');
-        console.log('data To DB: ' + this.selectedInicialTime);
-        console.log(new Date(booking.date).toUTCString() + ' booking');
 
-        // this.route.navigateByUrl('/home').then(()=>{
-        //   location.reload();
-        // });
+        this.route.navigateByUrl('/home').then(() => {
+          location.reload();
+        });
       },
         error => {
           console.log('Deu ruim no retorno da gravação da nova reserva.');
@@ -116,33 +114,30 @@ export class RoomBookingPage implements OnInit {
         });
   }
 
-  myCompareDate(i: Reservation) {
+  myCompareDate(i: Reservation): boolean {
     return new Date(i.date).getDate() == new Date(this.selectedInicialTime).getDate();
   }
 
-  bookingValidation(): boolean {
-    // if (!new Date(this.selectedDate).getDate()) {
-    if (!this.selectedDate) {
-      this.alertService.presentToast('Selecione uma data.');
-      return false;
-    }
+  setHours() {
+    for (let i = 6; i < 20; i++) {
+      let insert = false;
+      // this.bookingList.forEach(element => {
+      for (let j = 0; j < this.bookingList.length; j++) {
 
-    if (!this.selectedInicialTime) {
-      this.alertService.presentToast('Selecione o hora de inicio.');
-      return false;
-    }
-
-    if (!this.selectedFinalTime) {
-      this.alertService.presentToast('Selecione o hora de termino.');
-      return false;
-    }
-
-    if (new Date(this.selectedDate).toLocaleDateString() == new Date().toLocaleDateString()) {
-      if (new Date(this.selectedInicialTime).getHours() < new Date().getHours()) {
-        this.alertService.presentToast('Selecione uma hora posterior a atual.');
-        return false;
+        if (i < new Date(this.bookingList[j].date).getHours() ||
+          i > (new Date(this.bookingList[j].date).getHours() + (this.bookingList[j].period / 60))) {
+            insert = true;
+        } else {
+          insert = false;
+          break;
+        }
+      }
+      // });
+      if (insert) {
+        console.log('inseriu '+i);
+        
+        this.customHours.push(i);
       }
     }
-    return true;
   }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/Models/User';
 import { ReservationService } from 'src/app/Service/Reservation.service';
+import { Reservation } from 'src/app/Models/Reservation';
+import addMinutes from 'date-fns/addMinutes';
 
 @Component({
   selector: 'app-pending-booking',
@@ -17,15 +19,16 @@ export class PendingBookingPage implements OnInit {
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('user'));
+
     this.bookingService.getBookingByApprovation(false).subscribe(b => {
       if (b.length <= 0) {
         this.noData = true;
       } else {
         b.forEach(i => {
-          console.log(i.author + ' - ' + this.user.name);
-
-          if (i.author == this.user.name) {
-            this.items.push({ expanded: false, sala: i });
+          if (!i.approved) {
+            var res = addMinutes(new Date(i.date), i.period);
+            i.checkout = new Date(res);
+            this.items.push({ expanded: false, booking: i });
           }
         });
       }
@@ -47,11 +50,19 @@ export class PendingBookingPage implements OnInit {
     }
   }
 
-  Approve() {
+  Approvation(approved: boolean, booking: Reservation) {
+    if (approved) {
+      booking.approved = true;
+      this.bookingService.putByApprovation(booking).subscribe(b => {
+        console.log('Reserva atualizada');
 
-  }
+      });
+    } else {
+      this.bookingService.deleteBooking(booking).subscribe(b => {
+        /** TODO: enviar notificação para o usuario, informando a reccusa da reserva.*/
+        console.log('Reserva excluida');
 
-  Disapprove() {
-
+      });
+    }
   }
 }

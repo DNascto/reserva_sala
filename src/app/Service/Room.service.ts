@@ -38,9 +38,13 @@ export class RoomService {
     getAllRoom() {
         return this.http.get<Room[]>(this.env.API_URL + '/all', { headers: this.headers });
     }
-
+    
     getCountRoom(booked: boolean) {
         const params = new HttpParams().set('booked', booked.toString());
         return this.http.get<number>(this.env.API_URL + '/count/', { params, headers: this.headers });
     }
+    
+    // putApprovation(room: Room) {
+    //     return this.http.put<Room>(this.env.API_URL + '/', { headers: this.headers });
+    // }
 }
