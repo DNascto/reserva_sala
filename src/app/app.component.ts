@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AuthService } from './Service/auth.service';
 import { AlertService } from './Service/alert.service';
+import { User } from './Models/User';
 
 @Component({
   selector: 'app-root',
@@ -18,19 +19,30 @@ export class AppComponent {
     {
       title: 'Home',
       url: '/home',
-      icon: 'home'
+      icon: 'home',
+      access: '14'
     },
     {
       title: 'Minhas Reservas',
       url: '/list',
-      icon: 'list'
+      icon: 'list',
+      access: '14'
+    },
+    {
+      title: 'Reservas Pendentes',
+      url: '/pending-booking',
+      icon: 'time',
+      access: '1'
     },
     {
       title: 'Configurações',
       url: '/configs',
-      icon: 'settings'
+      icon: 'settings',
+      access: '14'
     }
   ];
+
+  user: User;
 
   constructor(
     private platform: Platform,
@@ -54,16 +66,24 @@ export class AppComponent {
 
   // When Logout Button is pressed 
   logout() {
-    this.authService.logout().subscribe(
-      data => {
-        this.alertService.presentToast(data['message']);        
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        this.navCtrl.navigateRoot('/login');
-      }
-    );
+    this.authService.logout();
+    // this.authService.logout().subscribe(
+    //   data => {
+    //     this.alertService.presentToast(data['message']);        
+    //   },
+    //   error => {
+    //     console.log(error);
+    //   },
+    //   () => {
+    this.navCtrl.navigateRoot('/login');
+    //   }
+    // );
+  }
+
+  userAccessLevel(num: string): boolean {
+    this.user = JSON.parse(localStorage.getItem('user'));
+    var al = this.user.accessLevel.toString();
+    
+    return num.toString().includes(this.user.accessLevel.toString());
   }
 }

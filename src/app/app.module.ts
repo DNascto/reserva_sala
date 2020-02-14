@@ -11,7 +11,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-// import { InputMaskModule } from 'ionic-input-mask';
 
 @NgModule({
   declarations: [AppComponent
@@ -22,7 +21,6 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule
-    // InputMaskModule
   ],
   providers: [
     StatusBar,

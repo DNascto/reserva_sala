@@ -1,12 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { NavController, MenuController } from '@ionic/angular';
+import { AlertService } from 'src/app/Service/alert.service';
+import { AuthService } from 'src/app/Service/auth.service';
 import { DataService } from 'src/app/Service/data.service';
 import { RoomService } from 'src/app/Service/Room.service';
 import { UserService } from 'src/app/Service/User.service';
 import { ReservationService } from 'src/app/Service/Reservation.service';
-import { ToastController, NavController } from '@ionic/angular';
 import { User } from 'src/app/Models/User';
-import { AlertService } from 'src/app/Service/alert.service';
-import { AuthService } from 'src/app/Service/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -19,17 +19,18 @@ export class HomePage implements OnInit {
 
   user: User;
 
-  controller = document.querySelector('div > ion-toast-controller');
-
   constructor(
-    private roomsService: RoomService,
     private bookingService: ReservationService,
+    private roomsService: RoomService,
     private userService: UserService,
     private dataService: DataService,
     private alertService: AlertService,
     private authService: AuthService, 
+    private menu: MenuController,
     private navCtrl: NavController
-  ) { }
+  ) { 
+    this.menu.enable(true); 
+  }
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
     pager: true,

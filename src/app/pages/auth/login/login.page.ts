@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { NavController, ModalController } from '@ionic/angular';
-import { RegisterPage } from '../register/register.page';
+import { Router } from '@angular/router';
+import { NavController, MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/Service/alert.service';
 import { AuthService } from 'src/app/Service/auth.service';
-import { Router } from '@angular/router';
 import { ValidationsService } from 'src/app/Service/validations.service';
 
 @Component({
@@ -16,32 +15,24 @@ import { ValidationsService } from 'src/app/Service/validations.service';
 export class LoginPage implements OnInit {
 
   constructor(
-    private modalController: ModalController,
     private authService: AuthService,
-    private navCtrl: NavController,
     private alertService: AlertService,
     private validation: ValidationsService,
+    private navCtrl: NavController,
+    private menu: MenuController,
     private route: Router
-  ) { }
+  ) { 
+    this.menu.enable(false); 
+  }
 
   ngOnInit() {
   }
 
-  // Dismiss Login Modal
-  dismissLogin() {
-    this.modalController.dismiss();
-  }
-
   // On Register button tap, dismiss login modal and open register modal
   async registerModal() {
-    this.dismissLogin();
     this.route.navigateByUrl('/register').then(() => {
       location.reload();
     });
-    // const registerModal = await this.modalController.create({
-    //   component: RegisterPage
-    // });
-    // return await registerModal.present();
   }
 
   login(form: NgForm) {

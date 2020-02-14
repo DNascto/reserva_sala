@@ -1,9 +1,8 @@
-import { Room } from '../../Models/Room';
-import { Component, OnInit, Input } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
-import { RoomBookingPage } from '../room-booking/room-booking.page';
 import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { AlertController, NavController } from '@ionic/angular';
 import { DataService } from 'src/app/Service/data.service';
+import { Room } from '../../Models/Room';
 
 @Component({
   selector: 'app-empty-room',
@@ -20,8 +19,8 @@ export class EmptyRoomComponent implements OnInit {
   selectedDate;
   customPickerOptions: any;
   showReserves;
-  
   maxDate;
+  
   constructor(
     private dataService: DataService,
     private route: Router,

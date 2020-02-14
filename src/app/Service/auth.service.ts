@@ -4,7 +4,6 @@ import { tap } from 'rxjs/operators';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
 import { User } from '../Models/User';
-import { UserWithToken } from '../Models/UserWithToken';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -32,6 +31,7 @@ export class AuthService {
     .pipe(
       tap(token => {
         localStorage.setItem('user_with_token', JSON.stringify(token));        
+        localStorage.setItem('user', JSON.stringify(token.user));        
         localStorage.setItem('token', JSON.stringify('Bearer ' + token.token));
         // this.storage.setItem('token', token)
         //   .then(
@@ -46,32 +46,22 @@ export class AuthService {
       }),
     );
   }
-  //TODO: verificar se é necessario aqui
-  // register(_user: User) {
-  //   this.headers = new HttpHeaders();
-  //   this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
-  //   return this.http.post(this.env.API_URL + '/auth/register', { user: _user }, { headers: this.headers });
-  // }
-  // forma inicial, como o site apresentou
-  // register(fName: String, lName: String, email: String, password: String) {
-  //   return this.http.post(this.env.API_URL + 'auth/register',
-  //     {fName: fName, lName: lName, email: email, password: password}
-  //   )
-  // }
 
   logout() {
-    const headers = new HttpHeaders({
-      'Authorization': this.token["token_type"] + " " + this.token["access_token"]
-    });
-    return this.http.get(this.env.API_URL + 'auth/logout', { headers: headers })
-      .pipe(
-        tap(data => {
+    /** TODO: descomentar quando for implantar o JWT */ 
+    // const headers = new HttpHeaders({
+    //   'Authorization': this.token["token_type"] + " " + this.token["access_token"]
+    // });
+    // return this.http.get(this.env.API_URL + 'auth/logout', { headers: headers })
+    //   .pipe(
+    //     tap(data => {
           this.storage.remove("token");
+          localStorage.removeItem('token');
           this.isLoggedIn = false;
           delete this.token;
-          return data;
-        })
-      )
+          // return data;
+      //   })
+      // )
   }
 
   user() {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertService } from 'src/app/Service/alert.service';
-import { NavController, ModalController } from '@ionic/angular';
+import { NavController, ModalController, MenuController } from '@ionic/angular';
 import { AuthService } from 'src/app/Service/auth.service';
 import { NgForm } from '@angular/forms';
 import { LoginPage } from '../login/login.page';
@@ -18,22 +18,19 @@ export class RegisterPage implements OnInit {
   constructor(private modalController: ModalController,
     private authService: AuthService,
     private userService: UserService,
-    private navCtrl: NavController,
     private alertService: AlertService,
+    private navCtrl: NavController,
+    private menu: MenuController,
     private route: Router
-  ) { }
+  ) { 
+    this.menu.enable(false);
+  }
 
   ngOnInit() {
   }
 
-  // Dismiss Register Modal
-  dismissRegister() {
-    this.modalController.dismiss();
-  }
-
   // // On Login button tap, dismiss Register modal and open login Modal
   async loginModal() {
-    this.dismissRegister();
     this.route.navigateByUrl('/login').then(() => {
       location.reload();
     });

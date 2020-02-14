@@ -33,9 +33,11 @@ const routes: Routes = [
   {
     path: 'register',
     loadChildren: () => import('./pages/auth/register/register.module').then( m => m.RegisterPageModule)
+  },
+  {
+    path: 'pending-booking',
+    loadChildren: () => import('./Modules/pending-booking/pending-booking.module').then( m => m.PendingBookingPageModule)
   }
-
-
 ];
 
 @NgModule({

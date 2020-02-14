@@ -8,7 +8,7 @@ import { EnvService } from './env.service';
 })
 export class RoomService {
     // url = 'http://localhost:8080';      
-    headers: HttpHeaders;
+    headers = new HttpHeaders();
     // token;
 
     constructor(protected http: HttpClient, private env: EnvService) {

@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Reservas pendentes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="noData == true; elseHasData">
+  
+    <h1>Não há reservas pendentes</h1>
+  
+</ion-content>
+<ng-template #elseHasData>
+  <ion-content>
+    <ion-card (click)="expandItem(item)" *ngFor="let item of items">
+      <ion-card-header>
+        <ion-card-title>{{item.sala.name}}
+          <ion-icon (click)="presentAlert(item.sala)" name="information-circle-outline"></ion-icon>
+        </ion-card-title>
+        <ion-card-subtitle>Autor: {{item.sala.author}}</ion-card-subtitle>
+      </ion-card-header>
+
+      <!-- <ion-card-content>
+      <app-expandable expandHeight="100px" [expanded]="item.expanded"> -->
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <p>
+              Lugares: {{i.sala.places}}
+            </p>
+          </ion-col>
+          <ion-col size="6">
+            <p *ngIf="item.sala.projector; else elseProjetor">
+              Projetor: Sim
+            </p>
+            <ng-template #elseProjetor>Projetor: Não</ng-template>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="2">
+            De:
+          </ion-col>
+          <ion-col size="4">
+            {{i.sala.date | date : 'HH:mm'}}
+          </ion-col>
+          <ion-col size="2">
+            até
+          </ion-col>
+          <ion-col size="4">
+            {{i.sala.checkout | date : 'HH:mm'}}
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button (click)="Approve()">Aprovar</ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button (click)="Disapprove()">Desaprovar</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <!-- </app-expandable>
+    </ion-card-content> -->
+    </ion-card>
+  </ion-content>
+</ng-template>
