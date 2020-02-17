@@ -39,15 +39,16 @@ export class HomePage implements OnInit {
   };
 
   ionViewWillEnter() {
-    this.authService.user().subscribe(
-      user => {
+    // this.authService.user().subscribe(
+      // user => {
+        let user = JSON.parse(localStorage.getItem('user'));
         if(this.authService.isLoggedIn) {
           this.user = user;
         } else {
           this.navCtrl.navigateRoot('/login');
         }
-      }
-    );
+      // }
+    // );
   }
 
   ngOnInit(): void {

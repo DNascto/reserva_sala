@@ -21,8 +21,8 @@ export class LoginPage implements OnInit {
     private navCtrl: NavController,
     private menu: MenuController,
     private route: Router
-  ) { 
-    this.menu.enable(false); 
+  ) {
+    this.menu.enable(false);
   }
 
   ngOnInit() {
@@ -52,6 +52,8 @@ export class LoginPage implements OnInit {
       error => {
         if (error.status == 401) {
           this.alertService.presentToast('Perfil não encontrado. Usuario e/ou senha incorreto.');
+        } else if (error.status == 102) {
+
         }
       }
     );
