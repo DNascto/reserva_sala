@@ -60,7 +60,7 @@ export class AppComponent {
       this.statusBar.styleDefault();
       // Commenting splashScreen Hide, so it won't hide splashScreen before auth check
       //this.splashScreen.hide();
-      this.authService.getToken();
+      // this.authService.getToken();
     });
   }
 
