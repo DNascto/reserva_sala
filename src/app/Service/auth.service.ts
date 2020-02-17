@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { EnvService } from './env.service';
 import { User } from '../Models/User';
 import { Observable } from 'rxjs';
@@ -17,7 +16,6 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private storage: NativeStorage,
     private env: EnvService,
   ) { }
 
@@ -55,7 +53,6 @@ export class AuthService {
     // return this.http.get(this.env.API_URL + 'auth/logout', { headers: headers })
     //   .pipe(
     //     tap(data => {
-          this.storage.remove("token");
           localStorage.removeItem('token');
           this.isLoggedIn = false;
           delete this.token;
@@ -76,20 +73,20 @@ export class AuthService {
       ) 
   }
 
-  getToken() {
-    return this.storage.getItem('token').then(
-      data => {
-        this.token = data;
-        if (this.token != null) {
-          this.isLoggedIn = true;
-        } else {
-          this.isLoggedIn = false;
-        }
-      },
-      error => {
-        this.token = null;
-        this.isLoggedIn = false;
-      }
-    );
-  }
+  // getToken() {
+  //   return this.storage.getItem('token').then(
+  //     data => {
+  //       this.token = data;
+  //       if (this.token != null) {
+  //         this.isLoggedIn = true;
+  //       } else {
+  //         this.isLoggedIn = false;
+  //       }
+  //     },
+  //     error => {
+  //       this.token = null;
+  //       this.isLoggedIn = false;
+  //     }
+  //   );
+  // }
 }
