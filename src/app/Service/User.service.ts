@@ -8,14 +8,14 @@ import { EnvService } from './env.service';
     providedIn: 'root'
 })
 export class UserService {
-    url = 'http://localhost:8080';
+    // url = 'http://localhost:8080';
     private headers: HttpHeaders;
 
     constructor(private http: HttpClient, private env: EnvService) { }
 
     getUserById(id: number) {
         const params = new HttpParams().set('id', id.toString());
-        return this.http.get<User>( this.url + '/user', { params });
+        return this.http.get<User>( this.env.API_URL + '/user', { params });
     }
     
     // ainda nao criado

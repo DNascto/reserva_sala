@@ -23,7 +23,7 @@ export class AuthService {
     
     this.headers = new HttpHeaders();
     this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
-    return this.http.post(this.env.API_URL + '/authenticate',
+    return this.http.post(this.env.API_URL + '/login',
       { cpf: cpf, password: password }, { headers: this.headers }
     )
     .pipe(

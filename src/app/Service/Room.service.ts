@@ -24,13 +24,13 @@ export class RoomService {
     }
 
     getAllFreeRoom() {
-        const token = JSON.parse(localStorage.getItem('token'));
+        // const token = JSON.parse(localStorage.getItem('token'));
 
         // const hand = new HttpHeaders({'Content-Type': 'application/json; charset=utf-8', 'Authorization': token});
-        this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8')
-                                   .set('Authorization', token);
+        this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
+                                //    .set('Authorization', token);
                                                 
-        console.log(this.http.get<Room[]>(this.env.API_URL + '/rooms', { headers: new HttpHeaders({'Authorization': token}) }));
+        // console.log(this.http.get<Room[]>(this.env.API_URL + '/rooms', { headers: new HttpHeaders({'Authorization': token}) }));
             
         return this.http.get<Room[]>(this.env.API_URL + '/rooms', { headers: this.headers });
     }
