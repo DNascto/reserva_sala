@@ -7,7 +7,7 @@ import { HttpHeaders } from '@angular/common/http';
 
 export class EnvService {
 
-  API_URL = 'http://localhost:8080';
+  API_URL = 'https://dry-journey-31622.herokuapp.com';
   headers: HttpHeaders;
   
   constructor() {
