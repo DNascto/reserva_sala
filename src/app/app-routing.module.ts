@@ -37,7 +37,11 @@ const routes: Routes = [
   {
     path: 'pending-booking',
     loadChildren: () => import('./Modules/pending-booking/pending-booking.module').then( m => m.PendingBookingPageModule)
+  },  {
+    path: 'manage-room',
+    loadChildren: () => import('./Modules/manage-room/manage-room.module').then( m => m.ManageRoomPageModule)
   }
+
 ];
 
 @NgModule({

@@ -18,9 +18,6 @@ import { ValidationsService } from 'src/app/Service/validations.service';
   styleUrls: ['./room-booking.page.scss'],
 })
 export class RoomBookingPage implements OnInit {
-  periodStarts;
-  periodEnds;
-  minPeriod;
   maxDate;
   today;
   selectedDate;
@@ -29,10 +26,10 @@ export class RoomBookingPage implements OnInit {
   selectedRoom: Room;
   toggleFinalTime: boolean;
 
+  limitHour = 20;
   customHours = [];//[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
   bookingList: Reservation[];
   user: User;
-  disabledHours: [11, 12, 13];
 
   constructor(
     private reservationService: ReservationService,
@@ -41,8 +38,16 @@ export class RoomBookingPage implements OnInit {
     private alertService: AlertService,
     private validationService: ValidationsService
   ) {
-    this.today = new Date().toISOString();
-    this.selectedDate = new Date().toISOString();
+
+    if (new Date().getHours() < this.limitHour) {
+      this.today = new Date().toISOString();
+      this.selectedDate = new Date().toISOString();
+    } else {
+      let nextDay = new Date(); 
+      this.today = nextDay.toISOString();
+      nextDay.setDate(nextDay.getDate() + 1);
+      this.selectedDate = nextDay.toISOString();
+    }
 
     let now = new Date();
     now.setFullYear(now.getFullYear() + 5); // 5 days
@@ -55,11 +60,11 @@ export class RoomBookingPage implements OnInit {
     this.user = JSON.parse(localStorage.getItem('user'));
     this.dataService.varSelectedRoom.subscribe(r => {
       this.selectedRoom = r;
-    })
+    });
 
     this.dataService.varCurrentBookings.subscribe(r => {
       this.bookingList = r;
-    })
+    });
     this.setHours();
   }
   // ngOnDestroy() {
@@ -119,23 +124,19 @@ export class RoomBookingPage implements OnInit {
   }
 
   setHours() {
-    for (let i = 6; i < 20; i++) {
+    for (let i = 6; i <= this.limitHour; i++) {
       let insert = false;
-      // this.bookingList.forEach(element => {
       for (let j = 0; j < this.bookingList.length; j++) {
 
         if (i < new Date(this.bookingList[j].date).getHours() ||
           i > (new Date(this.bookingList[j].date).getHours() + (this.bookingList[j].period / 60))) {
-            insert = true;
+          insert = true;
         } else {
           insert = false;
           break;
         }
       }
-      // });
       if (insert) {
-        console.log('inseriu '+i);
-        
         this.customHours.push(i);
       }
     }

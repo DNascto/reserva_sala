@@ -42,11 +42,11 @@ export class HomePage implements OnInit {
     // this.authService.user().subscribe(
       // user => {
         let user = JSON.parse(localStorage.getItem('user'));
-        if(this.authService.isLoggedIn) {
-          this.user = user;
-        } else {
-          this.navCtrl.navigateRoot('/login');
-        }
+        // if(this.authService.isLoggedIn) {
+        //   this.user = user;
+        // } else {
+        //   this.navCtrl.navigateRoot('/login');
+        // }
       // }
     // );
   }
@@ -67,7 +67,7 @@ export class HomePage implements OnInit {
       console.log(err);
     });
 
-    this.roomsService.getAllFreeRoom().subscribe(r => {    
+    this.roomsService.getAllRoom().subscribe(r => {    
       this.dataService.freeRooms(r);
       // localStorage.setItem('freeRooms', JSON.stringify(r));
     }, err => {

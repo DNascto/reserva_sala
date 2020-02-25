@@ -23,13 +23,13 @@ export class AuthService {
     
     this.headers = new HttpHeaders();
     this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
-    return this.http.post(this.env.API_URL + '/login',
-      { cpf: cpf, password: password }, { headers: this.headers }
+    return this.http.post(this.env.API_URL + '/user/authenticate',
+      { login: cpf, password: password }, { headers: this.headers }
     )
     .pipe(
       tap(token => {
         localStorage.setItem('user_with_token', JSON.stringify(token));        
-        localStorage.setItem('user', JSON.stringify(token.user));        
+        localStorage.setItem('user', JSON.stringify(token));        
         localStorage.setItem('token', JSON.stringify('Bearer ' + token.token));
         // this.storage.setItem('token', token)
         //   .then(
@@ -54,6 +54,8 @@ export class AuthService {
     //   .pipe(
     //     tap(data => {
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('user_with_token');
           this.isLoggedIn = false;
           delete this.token;
           // return data;
@@ -89,4 +91,20 @@ export class AuthService {
   //     }
   //   );
   // }
+
+  
+// Accept multiple CORS
+//   Using CorsRegistry:
+
+// @Override
+// public void addCorsMappings(CorsRegistry registry) {
+//     registry.addMapping("/api/**")
+//         .allowedOrigins("http://domain1.com","http://domain2.com");
+// }
+// Using @CrossOrigin:
+
+// @CrossOrigin(origins = {"http://domain1.com","http://domain2.com"})
+// Using application.properties
+
+// management.endpoints.web.cors.allowed-origins=http://domain1.com,http://domain2.com
 }

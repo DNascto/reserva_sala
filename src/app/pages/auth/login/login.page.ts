@@ -28,13 +28,6 @@ export class LoginPage implements OnInit {
   ngOnInit() {
   }
 
-  // On Register button tap, dismiss login modal and open register modal
-  async registerModal() {
-    this.route.navigateByUrl('/register').then(() => {
-      location.reload();
-    });
-  }
-
   login(form: NgForm) {
     if (!this.validation.loginValidation(form)) {
       return;
@@ -43,6 +36,8 @@ export class LoginPage implements OnInit {
     this.authService.login(form.value.cpf, form.value.password).subscribe(
       data => {
         // localStorage.setItem('token', JSON.stringify(data.token));
+        console.log(data);
+        
         if (!data || data == null) {
           this.alertService.presentToast('Usuario e/ou senha está incorreto');
         } else {
@@ -53,8 +48,9 @@ export class LoginPage implements OnInit {
         if (error.status == 401) {
           this.alertService.presentToast('Perfil não encontrado. Usuario e/ou senha incorreto.');
         } else if (error.status == 102) {
-
+          this.alertService.presentToast('Erro 102.');
         }
+        console.log(error);        
       }
     );
   }

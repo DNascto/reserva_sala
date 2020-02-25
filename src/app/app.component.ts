@@ -20,13 +20,13 @@ export class AppComponent {
       title: 'Home',
       url: '/home',
       icon: 'home',
-      access: '14'
+      access: '1234'
     },
     {
       title: 'Minhas Reservas',
       url: '/list',
       icon: 'list',
-      access: '14'
+      access: '1234'
     },
     {
       title: 'Reservas Pendentes',
@@ -35,10 +35,16 @@ export class AppComponent {
       access: '1'
     },
     {
+      title: 'Gerenciar Salas',
+      url: '/manage-room',
+      icon: 'apps',
+      access: '1'
+    },
+    {
       title: 'Configurações',
       url: '/configs',
       icon: 'settings',
-      access: '14'
+      access: '1234'
     }
   ];
 
@@ -82,7 +88,10 @@ export class AppComponent {
 
   userAccessLevel(num: string): boolean {
     this.user = JSON.parse(localStorage.getItem('user'));
-    var al = this.user.accessLevel.toString();
+
+    if(!this.user){
+      this.user.accessLevel = 4;
+    }
     
     return num.toString().includes(this.user.accessLevel.toString());
   }
