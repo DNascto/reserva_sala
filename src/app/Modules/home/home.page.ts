@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/Service/alert.service';
-import { AuthService } from 'src/app/Service/auth.service';
 import { DataService } from 'src/app/Service/data.service';
 import { RoomService } from 'src/app/Service/Room.service';
-import { UserService } from 'src/app/Service/User.service';
-import { ReservationService } from 'src/app/Service/Reservation.service';
-import { User } from 'src/app/Models/User';
+import { BookingService } from 'src/app/Service/Booking.service';
+import { ErrorHandlerService } from 'src/app/Service/error-handler.service';
+import { AuthService } from 'src/app/Service/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -17,19 +16,17 @@ export class HomePage implements OnInit {
   notReserved: number;
   reserved: number;
 
-  user: User;
-
   constructor(
-    private bookingService: ReservationService,
+    private bookingService: BookingService,
     private roomsService: RoomService,
-    private userService: UserService,
     private dataService: DataService,
+    private authService: AuthService,
     private alertService: AlertService,
-    private authService: AuthService, 
+    private errorHandler: ErrorHandlerService,
     private menu: MenuController,
     private navCtrl: NavController
-  ) { 
-    this.menu.enable(true); 
+  ) {
+    this.menu.enable(true);
   }
   // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
   slideOpts = {
@@ -39,16 +36,9 @@ export class HomePage implements OnInit {
   };
 
   ionViewWillEnter() {
-    // this.authService.user().subscribe(
-      // user => {
-        let user = JSON.parse(localStorage.getItem('user'));
-        // if(this.authService.isLoggedIn) {
-        //   this.user = user;
-        // } else {
-        //   this.navCtrl.navigateRoot('/login');
-        // }
-      // }
-    // );
+    if (this.authService.isAccessTokenInvalido()) {
+      this.navCtrl.navigateRoot('/login');
+    }
   }
 
   ngOnInit(): void {
@@ -57,36 +47,40 @@ export class HomePage implements OnInit {
 
     this.roomsService.getCountRoom(false).subscribe(r => {
       this.notReserved = r;
-    }, err => {
-      console.log(err);
+    }, error => {
+      this.errorHandler.handle(error);
     });
 
     this.roomsService.getCountRoom(true).subscribe(r => {
       this.reserved = r;
-    }, err => {
-      console.log(err);
+    }, error => {
+      this.errorHandler.handle(error);
     });
 
-    this.roomsService.getAllRoom().subscribe(r => {    
-      this.dataService.freeRooms(r);
-      // localStorage.setItem('freeRooms', JSON.stringify(r));
-    }, err => {
-      console.log(err);
-    });
+    // this.roomsService.getAllRoom().subscribe(
+    //   rooms => {
+    //     if (rooms.length <= 0) {
+    //       this.alertService.presentFixedToast('Não há salas cadastradas.');
+    //     } else {
+    //       console.log(rooms);
+    //       this.dataService.freeRooms(rooms);
+    //     }
+    //   }, error => {
+    //     this.errorHandler.handle(error);
+    //   });
 
-    this.bookingService.getAllReservation().subscribe(b => {
-      if (b.length === 0) {
-        this.alertService.presentFixedToast('Nenhum dado registrado');
-      } else {
-        this.dataService.allReservations(b);
-      }
-    }, err => {
-      console.log(err);
-      if (err.status === 0) {
-        this.alertService.presentFixedToast('Servidor em manutenção. Tente novamente mais tarde.');
-      } else if (err.status === 500) {
-        this.alertService.presentFixedToast('Erro de requisição. Tente novamente mais tarde.');
-      }
-    });
+    this.bookingService.getAllReservation().subscribe(
+      bookings => {
+        if (bookings.length === 0) {
+          this.alertService.presentToast('Nenhuma reserva registrada.');
+        } else {
+          this.dataService.allReservations(bookings);
+        }
+      }, error => {
+        this.errorHandler.handle(error);
+        if (error.status === 0) {
+          this.alertService.presentFixedToast('Servidor em manutenção. Tente novamente mais tarde.');
+        }
+      });
   }
 }

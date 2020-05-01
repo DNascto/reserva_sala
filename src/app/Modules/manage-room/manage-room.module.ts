@@ -7,14 +7,18 @@ import { IonicModule } from '@ionic/angular';
 import { ManageRoomPageRoutingModule } from './manage-room-routing.module';
 
 import { ManageRoomPage } from './manage-room.page';
+import { CoreModule } from 'src/app/Shared/core/core.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    CoreModule,
     ManageRoomPageRoutingModule
   ],
-  declarations: [ManageRoomPage]
+  declarations: [
+    ManageRoomPage
+  ]
 })
 export class ManageRoomPageModule {}

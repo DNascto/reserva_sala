@@ -10,8 +10,8 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    // loadChildren: './Modules/home/home.module#HomePageModule', canActivate: [AuthGuard] 
-    loadChildren: () => import('./Modules/home/home.module').then(m => m.HomePageModule), 
+    // loadChildren: './Modules/home/home.module#HomePageModule', canActivate: [AuthGuard]
+    loadChildren: () => import('./Modules/home/home.module').then(m => m.HomePageModule),
     canActivate: [AuthGuard]
   },
   {
@@ -20,28 +20,32 @@ const routes: Routes = [
   },
   {
     path: 'room-booking',
-    loadChildren: () => import('./Component/room-booking/room-booking.module').then( m => m.RoomBookingPageModule)
+    loadChildren: () => import('./Component/room-booking/room-booking.module').then(m => m.RoomBookingPageModule)
   },
   {
     path: 'configs',
-    loadChildren: () => import('./Modules/configs/configs.module').then( m => m.ConfigsPageModule)
+    loadChildren: () => import('./Modules/configs/configs.module').then(m => m.ConfigsPageModule)
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/auth/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/auth/login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'register',
-    loadChildren: () => import('./pages/auth/register/register.module').then( m => m.RegisterPageModule)
+    loadChildren: () => import('./pages/auth/register/register.module').then(m => m.RegisterPageModule)
   },
   {
     path: 'pending-booking',
-    loadChildren: () => import('./Modules/pending-booking/pending-booking.module').then( m => m.PendingBookingPageModule)
-  },  {
+    loadChildren: () => import('./Modules/pending-booking/pending-booking.module').then(m => m.PendingBookingPageModule)
+  },
+  {
     path: 'manage-room',
-    loadChildren: () => import('./Modules/manage-room/manage-room.module').then( m => m.ManageRoomPageModule)
+    loadChildren: () => import('./Modules/manage-room/manage-room.module').then(m => m.ManageRoomPageModule)
+  },
+  {
+    path: 'create-update-room',
+    loadChildren: () => import('./pages/create-update-room/create-update-room.module').then(m => m.CreateUpdateRoomPageModule)
   }
-
 ];
 
 @NgModule({
@@ -50,4 +54,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

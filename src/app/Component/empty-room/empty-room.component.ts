@@ -1,8 +1,11 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { DataService } from 'src/app/Service/data.service';
 import { Room } from '../../Models/Room';
+import { RoomService } from 'src/app/Service/Room.service';
+import { AlertService } from 'src/app/Service/alert.service';
+import { ErrorHandlerService } from 'src/app/Service/error-handler.service';
 
 @Component({
   selector: 'app-empty-room',
@@ -20,34 +23,44 @@ export class EmptyRoomComponent implements OnInit {
   customPickerOptions: any;
   showReserves;
   maxDate;
-  
+
   constructor(
     private dataService: DataService,
+    private roomService: RoomService,
+    private alertService: AlertService,
+    private errorHandler: ErrorHandlerService,
     private route: Router,
-    public alertController: AlertController,
-    public navCtrl: NavController
-  ) {}
+    public alertController: AlertController
+  ) { }
 
   ngOnInit() {
     this.today = new Date().toISOString();
-    let now = new Date();
+    const now = new Date();
     now.setDate(now.getFullYear() + 30);
     this.maxDate = now.toISOString();
 
-    this.dataService.varCurrentRooms.subscribe(data => {
-      data.forEach(i => {
-        this.items.push({ expanded: false, sala: i });
+    this.roomService.getAllRoom().subscribe(
+      rooms => {
+        if (rooms.length <= 0) {
+          this.alertService.presentFixedToast('Não há salas cadastradas.');
+        } else {
+          rooms.forEach(i => {
+            this.items.push({ expanded: false, sala: i });
+          });
+        }
+      }, error => {
+        this.errorHandler.handle(error);
       });
-    });
+
     this.toggleVisibility();
   }
 
   expandItem(item): void {
     if (item.expanded) {
-      // item.expanded = false;
+      item.expanded = false;
     } else {
       this.items.map(listItem => {
-        if (item == listItem) {
+        if (item === listItem) {
           listItem.expanded = !listItem.expanded;
         } else {
           listItem.expanded = false;
@@ -81,22 +94,22 @@ export class EmptyRoomComponent implements OnInit {
   loadData(event) {
     setTimeout(() => {
       event.target.complete();
-      if (this.items.length == 100) {
+      if (this.items.length === 100) {
         event.target.disabled = true;
       }
     }, 500);
   }
 
   toggleVisibility() {
-    var x = document.getElementById("opt1");
-    var y = document.getElementById("opt2");
+    const x = document.getElementById('opt1');
+    const y = document.getElementById('opt2');
 
-    if (x.style.display === "none") {
-      x.style.display = "block";
-      y.style.display = "none";
+    if (x.style.display === 'none') {
+      x.style.display = 'block';
+      y.style.display = 'none';
     } else {
-      x.style.display = "none";
-      y.style.display = "block";
+      x.style.display = 'none';
+      y.style.display = 'block';
     }
   }
 }

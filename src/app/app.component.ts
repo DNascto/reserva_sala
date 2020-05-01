@@ -20,31 +20,37 @@ export class AppComponent {
       title: 'Home',
       url: '/home',
       icon: 'home',
-      access: '1234'
+      accessLevel: '1234'
     },
     {
       title: 'Minhas Reservas',
       url: '/list',
       icon: 'list',
-      access: '1234'
+      accessLevel: '1234'
     },
     {
       title: 'Reservas Pendentes',
       url: '/pending-booking',
       icon: 'time',
-      access: '1'
+      accessLevel: '1'
+    },
+    {
+      title: 'Gerenciar Participantes/Usuarios',
+      url: '/manage-room',
+      icon: 'apps',
+      accessLevel: '1'
     },
     {
       title: 'Gerenciar Salas',
       url: '/manage-room',
       icon: 'apps',
-      access: '1'
+      accessLevel: '1'
     },
     {
       title: 'Configurações',
       url: '/configs',
       icon: 'settings',
-      access: '1234'
+      accessLevel: '1234'
     }
   ];
 
@@ -52,7 +58,7 @@ export class AppComponent {
 
   constructor(
     private platform: Platform,
-    private splashScreen: SplashScreen,
+    // private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private authService: AuthService,
     private navCtrl: NavController,
@@ -65,34 +71,39 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       // Commenting splashScreen Hide, so it won't hide splashScreen before auth check
-      //this.splashScreen.hide();
+      // this.splashScreen.hide();
       // this.authService.getToken();
     });
   }
 
-  // When Logout Button is pressed 
+  // When Logout Button is pressed
   logout() {
-    this.authService.logout();
-    // this.authService.logout().subscribe(
-    //   data => {
-    //     this.alertService.presentToast(data['message']);        
-    //   },
-    //   error => {
-    //     console.log(error);
-    //   },
-    //   () => {
-    this.navCtrl.navigateRoot('/login');
-    //   }
-    // );
+    this.authService.logout()
+      .then(
+        () => {
+          this.alertService.presentToast('Saindo');
+        })
+      .catch(
+        () => {
+          console.log('Erro ao fazer loggoout');
+        }
+      )
+      .finally(
+        () => {
+          this.navCtrl.navigateRoot('/login');
+        }
+      );
   }
 
   userAccessLevel(num: string): boolean {
-    this.user = JSON.parse(localStorage.getItem('user'));
-
-    if(!this.user){
-      this.user.accessLevel = 4;
+    if (this.authService.isLogged()) {
+      const accessLevel = this.authService.jwtPayload.accessLevel;
+      return num.toString().includes(accessLevel);
+    } else {
+      // this.user = new User().createUser('', '', 4, false, null);
+      return num.toString().includes('4');
     }
-    
-    return num.toString().includes(this.user.accessLevel.toString());
+
+    // return num.toString().includes(this.user.accessLevel.toString());
   }
 }

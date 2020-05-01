@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NavController, MenuController } from '@ionic/angular';
 import { AlertService } from 'src/app/Service/alert.service';
 import { AuthService } from 'src/app/Service/auth.service';
 import { ValidationsService } from 'src/app/Service/validations.service';
+import { ErrorHandlerService } from 'src/app/Service/error-handler.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ import { ValidationsService } from 'src/app/Service/validations.service';
 })
 
 export class LoginPage implements OnInit {
+  hidePwd = true;
 
   constructor(
     private authService: AuthService,
@@ -20,7 +22,9 @@ export class LoginPage implements OnInit {
     private validation: ValidationsService,
     private navCtrl: NavController,
     private menu: MenuController,
-    private route: Router
+    private route: Router,
+    private errorHandler: ErrorHandlerService,
+    public router: ActivatedRoute
   ) {
     this.menu.enable(false);
   }
@@ -33,25 +37,21 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    this.authService.login(form.value.cpf, form.value.password).subscribe(
-      data => {
-        // localStorage.setItem('token', JSON.stringify(data.token));
-        console.log(data);
-        
-        if (!data || data == null) {
-          this.alertService.presentToast('Usuario e/ou senha está incorreto');
-        } else {
-          this.navCtrl.navigateRoot('/home');
+    this.authService.login(form.value.cpf, btoa(form.value.password))
+      .then(
+        () => {
+          if (this.authService.isLogged()) {
+            this.navCtrl.navigateRoot('/');
+          }
         }
-      },
-      error => {
-        if (error.status == 401) {
-          this.alertService.presentToast('Perfil não encontrado. Usuario e/ou senha incorreto.');
-        } else if (error.status == 102) {
-          this.alertService.presentToast('Erro 102.');
+      ).catch(
+        error => {
+          this.errorHandler.handle(error);
         }
-        console.log(error);        
-      }
-    );
+      );
+  }
+
+  cadEmpr() {
+    this.route.navigateByUrl('register');
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Room } from '../Models/Room';
-import { Reservation } from '../Models/Reservation';
+import { Booking } from '../Models/Booking';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class DataService {
 
   private sourceRoom = new BehaviorSubject(this.room);
   private sourceRooms = new BehaviorSubject(new Array<Room>());
-  private sourceBooking = new BehaviorSubject(new Array<Reservation>());
+  private sourceBooking = new BehaviorSubject(new Array<Booking>());
   varSelectedRoom = this.sourceRoom.asObservable();
   varCurrentRooms = this.sourceRooms.asObservable();
   varCurrentBookings = this.sourceBooking.asObservable();
@@ -30,7 +30,7 @@ export class DataService {
     this.sourceRooms.next(val);
   }
 
-  allReservations(val2: Array<Reservation>) {
+  allReservations(val2: Array<Booking>) {
     this.sourceBooking.next(val2);
   }
 }

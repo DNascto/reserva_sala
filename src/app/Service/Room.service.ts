@@ -1,50 +1,59 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Room } from '../Models/Room';
-import { EnvService } from './env.service';
+import { API_URL } from './app.api';
+import { Observable } from 'rxjs';
+import { LoginHttp } from '../pages/auth/token/login-http';
 
 @Injectable({
     providedIn: 'root'
 })
 export class RoomService {
-    // url = 'http://localhost:8080';      
-    headers = new HttpHeaders();
-    // token;
+    private baseUrl: string;
 
-    constructor(protected http: HttpClient, private env: EnvService) {
-        // // this.headers = env.headers;
-        // this.token = localStorage.getItem('token');
-        // this.headers = new HttpHeaders();
-        // this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8')
-        //     .set('Authorization', 'Bearer ' + token);
+    constructor(protected http: HttpClient, private httpLogado: LoginHttp) {
+        this.baseUrl = API_URL + '/room';
     }
 
     getRoom() {
-        return this.http.get<Room>(this.env.API_URL + '/room', { headers: this.headers });
+        return this.http.get<Room>(this.baseUrl);
     }
 
     getAllFreeRoom() {
-        // const token = JSON.parse(localStorage.getItem('token'));
-
-        // const hand = new HttpHeaders({'Content-Type': 'application/json; charset=utf-8', 'Authorization': token});
-        this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
-                                //    .set('Authorization', token);
-                                                
-        // console.log(this.http.get<Room[]>(this.env.API_URL + '/rooms', { headers: new HttpHeaders({'Authorization': token}) }));
-            
-        return this.http.get<Room[]>(this.env.API_URL + '/rooms', { headers: this.headers });
+        return this.http.get<Room[]>(this.baseUrl + '/rooms');
     }
 
     getAllRoom() {
-        return this.http.get<Room[]>(this.env.API_URL + '/all', { headers: this.headers });
+        return this.http.get<Room[]>(this.baseUrl + '/all');
     }
-    
+
     getCountRoom(booked: boolean) {
         const params = new HttpParams().set('booked', booked.toString());
-        return this.http.get<number>(this.env.API_URL + '/count/', { params, headers: this.headers });
+        return this.http.get<number>(this.baseUrl + '/count/', { params });
     }
-    
-    // putApprovation(room: Room) {
-    //     return this.http.put<Room>(this.env.API_URL + '/', { headers: this.headers });
-    // }
+
+    createRoom(room: Room): Observable<Room> {
+        return this.httpLogado.post<Room>(this.baseUrl, room);
+    }
+
+    updateRoom(room: Room) {
+        return this.http.put<Room>(this.baseUrl, room);
+    }
+
+    updateApprovation(room: Room) {
+        return this.http.put<Room>(this.baseUrl + '/approvation', room);
+    }
+
+    deleteRoom(room: Room) {
+        console.log(room);
+        const params = new HttpParams().set('room', JSON.stringify(room));
+        console.log(params);
+        return this.http.delete<Room>(this.baseUrl, { params });
+    }
+
+    deleteRoomById(id: number) {
+        const params = new HttpParams().set('id', id.toString());
+        console.log(params);
+        return this.http.delete<Room>(this.baseUrl, { params });
+    }
 }

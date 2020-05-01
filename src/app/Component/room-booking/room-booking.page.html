@@ -24,8 +24,8 @@
     <ion-row>
       <ion-col size="5">
         <ion-datetime [(ngModel)]="selectedInicialTime" showBackdrop="true"
-         displayFormat="HH:mm" placeholder="Hora de inicio"
-          minuteValues="0,15,30,45" [hourValues]="customHours" cancelText="cancelar" doneText="selecionar">
+         displayFormat="HH:mm" minuteValues="0,15,30,45" placeholder="Hora de inicio"
+          [hourValues]="customHours" cancelText="cancelar" doneText="selecionar">
           <!-- (ionChange)="onSelectInitialTime()"> -->
         </ion-datetime>
       </ion-col>

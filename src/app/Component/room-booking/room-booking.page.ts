@@ -3,14 +3,16 @@ import { Router } from '@angular/router';
 
 import { AlertService } from 'src/app/Service/alert.service';
 import { DataService } from 'src/app/Service/data.service';
-import { ReservationService } from '../../Service/Reservation.service';
+import { BookingService } from '../../Service/Booking.service';
 
-import { Reservation } from '../../Models/Reservation';
+import { Booking } from '../../Models/Booking';
 import { Room } from '../../Models/Room';
 import { User } from 'src/app/Models/User';
 
 import diffInMinutes from 'date-fns/differenceInMinutes';
 import { ValidationsService } from 'src/app/Service/validations.service';
+import { ErrorHandlerService } from 'src/app/Service/error-handler.service';
+import { AuthService } from 'src/app/Service/auth.service';
 
 @Component({
   selector: 'app-room-booking',
@@ -27,37 +29,22 @@ export class RoomBookingPage implements OnInit {
   toggleFinalTime: boolean;
 
   limitHour = 20;
-  customHours = [];//[8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-  bookingList: Reservation[];
+  customHours = [];
+  bookingList: Booking[];
   user: User;
 
   constructor(
-    private reservationService: ReservationService,
+    private reservationService: BookingService,
     private dataService: DataService,
-    private route: Router,
     private alertService: AlertService,
-    private validationService: ValidationsService
-  ) {
-
-    if (new Date().getHours() < this.limitHour) {
-      this.today = new Date().toISOString();
-      this.selectedDate = new Date().toISOString();
-    } else {
-      let nextDay = new Date(); 
-      this.today = nextDay.toISOString();
-      nextDay.setDate(nextDay.getDate() + 1);
-      this.selectedDate = nextDay.toISOString();
-    }
-
-    let now = new Date();
-    now.setFullYear(now.getFullYear() + 5); // 5 days
-    this.maxDate = now.toISOString();
-
-    this.toggleFinalTime = false;
-  }
+    private authService: AuthService,
+    private errorHandler: ErrorHandlerService,
+    private validationService: ValidationsService,
+    private route: Router
+  ) { }
 
   ngOnInit() {
-    this.user = JSON.parse(localStorage.getItem('user'));
+    this.user = this.authService.jwtPayload;
     this.dataService.varSelectedRoom.subscribe(r => {
       this.selectedRoom = r;
     });
@@ -66,6 +53,22 @@ export class RoomBookingPage implements OnInit {
       this.bookingList = r;
     });
     this.setHours();
+
+    if (new Date().getHours() < this.limitHour) {
+      this.today = new Date().toISOString();
+      this.selectedDate = new Date().toISOString();
+    } else {
+      const nextDay = new Date();
+      this.today = nextDay.toISOString();
+      nextDay.setDate(nextDay.getDate() + 1);
+      this.selectedDate = nextDay.toISOString();
+    }
+
+    const now = new Date();
+    now.setFullYear(now.getFullYear() + 5); // 5 days
+    this.maxDate = now.toISOString();
+
+    this.toggleFinalTime = false;
   }
   // ngOnDestroy() {
   // }
@@ -74,7 +77,7 @@ export class RoomBookingPage implements OnInit {
   }
 
   onSelectInitialTime() {
-    let now = new Date(this.selectedInicialTime);
+    const now = new Date(this.selectedInicialTime);
     now.setHours(now.getHours() + 1);
     now.setMinutes(null);
     now.setSeconds(null);
@@ -90,55 +93,58 @@ export class RoomBookingPage implements OnInit {
       return;
     }
 
-    let period = diffInMinutes(new Date(this.selectedFinalTime), new Date(this.selectedInicialTime));
+    const period = diffInMinutes(new Date(this.selectedFinalTime), new Date(this.selectedInicialTime));
 
     if (period <= 0) {
       this.alertService.presentToast('A hora de termino deve ser posterior a hora de inicio.');
       return;
     }
 
-    let booking = new Reservation(
+    const booking = new Booking(
       this.selectedInicialTime,
       this.selectedRoom,
       period,
       this.user.name,
       this.user.immediatlyApprovation);
 
-    this.reservationService.postReservation(booking)
-      .subscribe(r => {
+    this.reservationService.postReservation(booking).subscribe(
+      () => {
         this.alertService.presentToast('Solicitação de reserva realizada com sucesso');
 
         this.route.navigateByUrl('/home').then(() => {
           location.reload();
         });
       },
-        error => {
-          console.log('Deu ruim no retorno da gravação da nova reserva.');
-          console.log(error);
-          this.alertService.presentToast('Erro ao gravar reserva. Tente novamente mais tarde.');
-        });
+      error => {
+        this.errorHandler.handle(error);
+        this.alertService.presentToast('Erro ao gravar reserva. Tente novamente mais tarde.');
+      });
   }
 
-  myCompareDate(i: Reservation): boolean {
+  myCompareDate(i: Booking): boolean {
+    // tslint:disable-next-line: triple-equals
     return new Date(i.date).getDate() == new Date(this.selectedInicialTime).getDate();
   }
 
   setHours() {
-    for (let i = 6; i <= this.limitHour; i++) {
-      let insert = false;
-      for (let j = 0; j < this.bookingList.length; j++) {
-
-        if (i < new Date(this.bookingList[j].date).getHours() ||
-          i > (new Date(this.bookingList[j].date).getHours() + (this.bookingList[j].period / 60))) {
-          insert = true;
-        } else {
-          insert = false;
-          break;
+    if (this.bookingList.length > 0) {
+      for (let i = 6; i <= this.limitHour; i++) {
+        let insert = false;
+        this.bookingList.forEach(element => {
+          if (i < new Date(element.date).getHours() ||
+            i > (new Date(element.date).getHours() + (element.period / 60))) {
+            insert = true;
+          } else {
+            insert = false;
+            return;
+          }
+        });
+        if (insert) {
+          this.customHours.push(i);
         }
       }
-      if (insert) {
-        this.customHours.push(i);
-      }
+    } else {
+      this.customHours = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     }
   }
 }

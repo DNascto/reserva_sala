@@ -1,110 +1,136 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { EnvService } from './env.service';
-import { User } from '../Models/User';
-import { Observable } from 'rxjs';
+import { API_URL } from './app.api';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AuthService {
+    jwtPayload: any;
+    tokenString: any;
 
-  isLoggedIn = false;
-  token: any;
-  private headers: HttpHeaders;
+    oauthTokenURL: string;
+    tokenRevokeURL: string;
 
-  constructor(
-    private http: HttpClient,
-    private env: EnvService,
-  ) { }
+    constructor(
+        private http: HttpClient,
+        private jwtHelper: JwtHelperService
+    ) {
+        this.jwtPayload = '';
+        this.oauthTokenURL = `${API_URL}/oauth/token`;
+        this.tokenRevokeURL = `${API_URL}/token/revoke`;
+        this.carregarToken();
+    }
 
-  login(cpf: String, password: String): Observable<any>  {
-    
-    this.headers = new HttpHeaders();
-    this.headers = this.headers.set('Content-Type', 'application/json; charset=utf-8');
-    return this.http.post(this.env.API_URL + '/user/authenticate',
-      { login: cpf, password: password }, { headers: this.headers }
-    )
-    .pipe(
-      tap(token => {
-        localStorage.setItem('user_with_token', JSON.stringify(token));        
-        localStorage.setItem('user', JSON.stringify(token));        
-        localStorage.setItem('token', JSON.stringify('Bearer ' + token.token));
-        // this.storage.setItem('token', token)
-        //   .then(
-        //     () => {
-        //       console.log('Token Stored');
-        //     },
-        //     error => console.error('Error storing item', error)
-        //   );
-        this.token = token;
-        this.isLoggedIn = true;
-        return token;
-      }),
-    );
-  }
+    login(usuario: string, senha: string): Promise<void> {
+        const headers = new HttpHeaders()
+            .append('Content-Type', 'application/x-www-form-urlencoded')
+            .append('Authorization', 'Basic YW5ndWxhcjpAbmd1bEByMA==');
 
-  logout() {
-    /** TODO: descomentar quando for implantar o JWT */ 
-    // const headers = new HttpHeaders({
-    //   'Authorization': this.token["token_type"] + " " + this.token["access_token"]
-    // });
-    // return this.http.get(this.env.API_URL + 'auth/logout', { headers: headers })
-    //   .pipe(
-    //     tap(data => {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          localStorage.removeItem('user_with_token');
-          this.isLoggedIn = false;
-          delete this.token;
-          // return data;
-      //   })
-      // )
-  }
+        const body = `username=${usuario}&password=${senha}&grant_type=password`;
 
-  user() {
-    const headers = new HttpHeaders({
-      'Authorization': this.token["token_type"] + " " + this.token["access_token"]
-    });
-    return this.http.get<User>(this.env.API_URL + 'auth/user', { headers: headers })
-      .pipe(
-        tap(user => {
-          return user;
-        })
-      ) 
-  }
+        return this.http.post<any>(this.oauthTokenURL, body, { headers, withCredentials: true })
+            .toPromise()
+            .then(response => {
+                this.armazenarToken(response.access_token);
+                this.armazenarNome(this.jwtPayload.name);
+            })
+            .catch(response => {
+                if (response.status === 400) {
+                    if (response.error === 'invalid_grant') {
+                        return Promise.reject('Usuário ou senha inválida!');
+                    }
+                }
 
-  // getToken() {
-  //   return this.storage.getItem('token').then(
-  //     data => {
-  //       this.token = data;
-  //       if (this.token != null) {
-  //         this.isLoggedIn = true;
-  //       } else {
-  //         this.isLoggedIn = false;
-  //       }
-  //     },
-  //     error => {
-  //       this.token = null;
-  //       this.isLoggedIn = false;
-  //     }
-  //   );
-  // }
+                return Promise.reject(response);
+            });
+    }
 
-  
-// Accept multiple CORS
-//   Using CorsRegistry:
+    obterNovoAccessToken(): Promise<void> {
+        const headers = new HttpHeaders()
+            .append('Content-Type', 'application/x-www-form-urlencoded')
+            .append('Authorization', 'Basic YW5ndWxhcjpAbmd1bEByMA==');
 
-// @Override
-// public void addCorsMappings(CorsRegistry registry) {
-//     registry.addMapping("/api/**")
-//         .allowedOrigins("http://domain1.com","http://domain2.com");
-// }
-// Using @CrossOrigin:
+        const body = 'grant_type=refresh_token';
 
-// @CrossOrigin(origins = {"http://domain1.com","http://domain2.com"})
-// Using application.properties
+        return this.http.post<any>(this.oauthTokenURL, body, { headers, withCredentials: true })
+            .toPromise()
+            .then(response => {
+                this.armazenarToken(response.access_token);
+                // console.log('Novo access token criado!');
 
-// management.endpoints.web.cors.allowed-origins=http://domain1.com,http://domain2.com
+                return Promise.resolve(null);
+            })
+            .catch(response => {
+                console.error('Erro ao renovar token.', response);
+                return Promise.resolve(null);
+            });
+    }
+
+    limparAccessToken() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('name');
+        localStorage.removeItem('accessLevel');
+        localStorage.clear();
+        this.jwtPayload = null;
+    }
+
+    isAccessTokenInvalido() {
+        const token = localStorage.getItem('token');
+        if (this.jwtHelper.isTokenExpired(token)) {
+            this.limparAccessToken();
+        }
+        return !token || this.jwtHelper.isTokenExpired(token);
+    }
+
+    isLogged(): boolean {
+        return !this.isAccessTokenInvalido();
+    }
+
+    temPermissao(permissao: string) {
+        console.log('verificando permissoes');
+        return this.jwtPayload && this.jwtPayload.authorities.includes(permissao);
+    }
+
+    temQualquerPermissao(roles) {
+        console.log('verificando qualquer permissao');
+        for (const role of roles) {
+            if (this.temPermissao(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private armazenarToken(token: string) {
+        this.jwtPayload = this.jwtHelper.decodeToken(token);
+        localStorage.setItem('token', token);
+    }
+
+    armazenarNome(name: string) {
+        localStorage.setItem('name', name);
+    }
+
+    private carregarToken() {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            this.armazenarToken(token);
+        }
+    }
+
+    logout() {
+        const headers = new HttpHeaders()
+            .append('Authorization', `Bearer ${localStorage.getItem('token')}`);
+        return this.http.delete(this.tokenRevokeURL, { headers, withCredentials: true })
+            .toPromise()
+            .then(() => {
+                this.limparAccessToken();
+            });
+    }
+
+    // resetPassword(user: UserCandidate) {
+    //     return this.http.patch(`${API_URL}/user/reset-password`, user);
+    // }
 }

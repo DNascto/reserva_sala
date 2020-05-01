@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/Models/User';
-import { ReservationService } from 'src/app/Service/Reservation.service';
-import { Reservation } from 'src/app/Models/Reservation';
+import { BookingService } from 'src/app/Service/Booking.service';
+import { Booking } from 'src/app/Models/Booking';
 import addMinutes from 'date-fns/addMinutes';
 
 @Component({
@@ -15,7 +15,7 @@ export class PendingBookingPage implements OnInit {
   user: User;
   noData;
 
-  constructor(private bookingService: ReservationService) { }
+  constructor(private bookingService: BookingService) { }
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('user'));
@@ -50,7 +50,7 @@ export class PendingBookingPage implements OnInit {
     }
   }
 
-  Approvation(approved: boolean, booking: Reservation) {
+  Approvation(approved: boolean, booking: Booking) {
     if (approved) {
       booking.approved = true;
       this.bookingService.putByApprovation(booking).subscribe(b => {

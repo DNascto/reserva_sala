@@ -10,20 +10,20 @@ export class ValidationsService {
 
   constructor(private alert: AlertService) { }
 
-  loginValidation(form: NgForm): boolean{
-    if(!form.value.cpf){
+  loginValidation(form: NgForm): boolean {
+    if (!form.value.cpf) {
       this.alert.presentToast('Informe um CPF ou apelido.');
       return false;
     }
-    
-    if(!form.value.password){
+
+    if (!form.value.password) {
       this.alert.presentToast('Informe a senha.');
       return false;
     }
     return true;
   }
 
-  bookingValidation (room: RoomBookingPage): boolean {      
+  bookingValidation(room: RoomBookingPage): boolean {
     if (!room.selectedDate) {
       this.alert.presentToast('Selecione uma data.');
       return false;

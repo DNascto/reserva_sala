@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ReservationService } from 'src/app/Service/Reservation.service';
+import { BookingService } from 'src/app/Service/Booking.service';
 
-import { Reservation } from 'src/app/Models/Reservation';
+import { Booking } from 'src/app/Models/Booking';
 import { User } from 'src/app/Models/User';
 
 import addMinutes from 'date-fns/addMinutes';
+import { AuthService } from 'src/app/Service/auth.service';
 
 @Component({
   selector: 'app-list',
@@ -14,21 +15,20 @@ import addMinutes from 'date-fns/addMinutes';
 
 export class ListPage implements OnInit {
   user: User;
-  bookings: Reservation[];
+  bookings: Booking[];
 
-  constructor(private bookingService: ReservationService) { }
+  constructor(private bookingService: BookingService, private authService: AuthService) { }
 
   ngOnInit() {
-    this.user = JSON.parse(localStorage.getItem('user'));
+    const name = this.authService.jwtPayload.name;
 
-    this.bookingService.getAllBookingByAuthor(this.user.name).subscribe( b => {
+    this.bookingService.getAllBookingByAuthor(name).subscribe(b => {
       this.bookings = b;
-      this.bookings.forEach(item => {        
-        var res = addMinutes(new Date(item.date), item.period);
+      this.bookings.forEach(item => {
+        const res = addMinutes(new Date(item.date), item.period);
         item.checkout = new Date(res);
       });
     });
     console.log(this.bookings);
-    
   }
 }

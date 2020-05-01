@@ -1,51 +1,69 @@
 <ion-header>
   <ion-toolbar>
-    <!-- <ion-button color="light" (click)="dismissRegister()">Close</ion-button> -->
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Registro</ion-title>
+    <ion-title>Cadastro de usuários</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-  <form #form="ngForm" (ngSubmit)="register(form)" method="post">
+  <form [formGroup]="userForm" (ngSubmit)="register()" method="post">
+    <div *ngIf="!logado">
+      <ion-item>
+        <ion-label position="floating">Nome da empresa</ion-label>
+        <ion-input name="company" formControlName="company"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating" mask="00.000.000/0000-00">CNPJ</ion-label>
+        <ion-input type="text" name="cnpj" formControlName="cnpj" maxlength="18"></ion-input>
+      </ion-item>
+    </div>
+    
     <ion-item>
       <ion-label position="floating">Nome completo</ion-label>
-      <ion-input ngModel name="name"></ion-input>
+      <ion-input name="name" formControlName="name"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label position="floating">CPF</ion-label>
-      <ion-input ngModel name="cpf" maxlength="15"></ion-input>
+      <ion-label position="floating" mask="000.000.000-00">CPF</ion-label>
+      <ion-input type="text" name="cpf" formControlName="cpf" maxlength="15"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Apelido</ion-label>
-      <ion-input ngModel name="nickname" maxlength="25"></ion-input>
+      <ion-input name="nickname" formControlName="nickname" maxlength="25"></ion-input>
     </ion-item>
-
-    <ion-item>
-      <ion-label>Cargo</ion-label>
-      <ion-select interface="popover" ngModel name="accessLevel" placeholder="Selecione o cargo">
-        <ion-select-option value="1">Administrador</ion-select-option>
-        <ion-select-option value="4">Comum</ion-select-option>
-        <ion-select-option value="3">Gerente</ion-select-option>
-        <ion-select-option value="2">Presidente</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Aprovação Imediata?</ion-label>
-      <ion-checkbox color="success" checked="false" ngModel name="immediatlyApprovation"></ion-checkbox>
-    </ion-item>
+    <ion-note color="medium">Apelido é usado para login</ion-note>
 
     <ion-item>
       <ion-label position="floating">Senha</ion-label>
-      <ion-input type="password" ngModel name="password" minlength="5"></ion-input>
+      <ion-input type="password" name="password" formControlName="password" minlength="5"></ion-input>
     </ion-item>
 
-    <ion-button type="submit" expand="full" color="primary">Registar</ion-button>
+    <ion-item>
+      <ion-label position="floating">Confirma Senha</ion-label>
+      <ion-input type="password" name="passwordCheck" formControlName="passwordCheck" minlength="5"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="logado">
+      <ion-label>Aprovação Imediata?</ion-label>
+      <ion-checkbox [ngModel] name="immediatlyApprovation" formControlName="immediatlyApprovation" checked="false"
+        color="success"></ion-checkbox>
+    </ion-item>
+
+    <ion-item *ngIf="logado">
+      <ion-label>Cargo</ion-label>
+      <ion-select interface="popover" name="accessLevel" formControlName="accessLevel" placeholder="Selecione o cargo">
+        <ion-select-option value="4">Colaborador</ion-select-option>
+        <ion-select-option value="3">Gerente</ion-select-option>
+        <ion-select-option value="2">Presidente</ion-select-option>
+        <ion-select-option value="1">Administrador</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <br />
+    <ion-button type="submit" expand="full" color="primary">Cadastrar</ion-button>
   </form>
-  <!-- <p class="ion-text-center">Already have a account?</p> -->
-  <!-- <ion-button expand="full" color="secondary" (click)="loginModal()">Login</ion-button> -->
+  <p class="ion-text-center" *ngIf="!logado">Já possui uma conta? <a [routerLink]="['/login']">Entrar </a></p>
 </ion-content>
